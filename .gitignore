@@ -1,4 +1,5 @@
 # Go workspace file
 go.work
 
+samples/
 gen

@@ -72,3 +72,11 @@ func initConfig() {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }
+
+// apiEndpoint returns the URL of the Vertex API endpoint based upon the
+// user's choice for the region
+func apiEndpoint() string {
+	var apiEndpoint string
+	apiEndpoint = fmt.Sprintf("%s-aiplatform.googleapis.com:443", region)
+	return apiEndpoint
+}
