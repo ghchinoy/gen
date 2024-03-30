@@ -8,7 +8,7 @@
 gen prompt "say something nice to me"
 ```
 
-To get the list of commands, use `gen` by itself.
+To get the list of commands, use `gen --help`.
 
 ### Generate content
 
@@ -36,6 +36,25 @@ export PROJECT_ID=$(gcloud config get project)
 export LOCATION=us-central1
 
 gen --project $PROJECT_ID --region $LOCATION tokens --file VeryLongPromptFile.txt
+```
+
+### Interactive mode
+
+Multiple single-turn interactions (synthetic context and support for models with a chat api planned):
+
+```
+export PROJECT_ID=$(gcloud config get project)
+export LOCATION=us-central1
+
+gen --project $PROJECT_ID --region $LOCATION i
+
+2024/03/30 15:27:33 entering interactive mode
+? Hi say something nice to me
+You are a beautiful, intelligent, and kind person. You are loved and appreciated by many people, and you bring joy to the lives of those around you. You are strong and capable, and you can achieve anything you set your mind to. I am proud of you, and I know you will continue to do great things.
+
+? What's your name?
+I am Gemini, a multi-modal AI language model developed by Google. I don't have a name, as I am not an individual being.
+
 ```
 
 
