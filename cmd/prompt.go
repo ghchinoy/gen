@@ -15,6 +15,7 @@ import (
 	"cloud.google.com/go/vertexai/genai"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/option"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -52,20 +53,21 @@ func generateContentForModel(cmd *cobra.Command, args []string) {
 	log.Printf("model: %s", modelName)
 	log.Printf("prompt: %s", args)
 
+	// TODO better as a switch guarded by model list
+	var err error
 	if strings.HasPrefix(modelName, "gemini") {
-		err := useGeminiModel(projectID, region, modelName, args)
-		if err != nil {
-			log.Printf("error generating content: %v", err)
-			os.Exit(1)
-		}
+		err = useGeminiModel(projectID, region, modelName, args)
 	} else if strings.Contains(modelName, "bison") {
-		err := usePaLMModel(projectID, region, modelName, args)
-		if err != nil {
-			log.Printf("error generating content: %v", err)
-			os.Exit(1)
-		}
+		err = usePaLMModel(projectID, region, modelName, args)
+	} else if strings.HasPrefix(modelName, "medlm-") || strings.HasPrefix(modelName, "medpalm") {
+		err = usePaLMModel(projectID, region, modelName, args)
+	} else if strings.HasPrefix(modelName, "claude") {
+		err = useClaudeModel(projectID, region, modelName, args)
 	} else {
-		log.Printf("model '%s' is not supported", modelName)
+		err = fmt.Errorf("model '%s' is not supported", modelName)
+	}
+	if err != nil {
+		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
 }
@@ -95,6 +97,24 @@ func usePaLMModel(projectID string, region string, modelName string, args []stri
 	}
 	var buf bytes.Buffer
 	if err := generateContentPaLM(&buf, prompt, projectID, region, "google", modelName, parameters); err != nil {
+		log.Printf("error generating content: %v", err)
+		os.Exit(1)
+	}
+	log.Printf("generated content: %s", buf.String())
+	return nil
+}
+
+func useClaudeModel(projectID string, region string, modelName string, args []string) error {
+	log.Print("using Anthropic")
+	prompt := args[0]
+	parameters := map[string]interface{}{
+		//"temperature":     0.8,
+		"maxTokens": 256,
+		//"topP":            0.4,
+		//"topK":            40,
+	}
+	var buf bytes.Buffer
+	if err := generateContentClaude(&buf, prompt, projectID, region, "anthropic", modelName, parameters); err != nil {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
@@ -173,13 +193,89 @@ func generateContentPaLM(w io.Writer, prompt, projectID, location, publisher, mo
 	return nil
 }
 
-// envCheck checks for an environment variable, otherwise returns default
-func envCheck(environmentVariable, defaultVar string) string {
-	if envar, ok := os.LookupEnv(environmentVariable); !ok {
-		return defaultVar
-	} else if envar == "" {
-		return defaultVar
-	} else {
-		return envar
+// generateContentClaude generates text from prompt and configurations provided.
+func generateContentClaude(w io.Writer, prompt, projectID, location, publisher, model string, parameters map[string]interface{}) error {
+	ctx := context.Background()
+
+	apiEndpoint := fmt.Sprintf("%s-aiplatform.googleapis.com:443", location)
+
+	client, err := aiplatform.NewPredictionClient(ctx, option.WithEndpoint(apiEndpoint))
+	if err != nil {
+		fmt.Fprintf(w, "unable to create prediction client: %v", err)
+		return err
 	}
+	defer client.Close()
+
+	// PredictRequest requires an endpoint, instances, and parameters
+	// Endpoint
+	base := fmt.Sprintf("projects/%s/locations/%s/publishers/%s/models", projectID, location, publisher)
+	url := fmt.Sprintf("%s/%s", base, model)
+	log.Printf("url: %s", url)
+
+	// Construct an Anthropic message.
+	// []messages{ role, []content { type, text }, max_tokens }
+	message, err := structpb.NewValue(map[string]interface{}{
+		"role": "user",
+		"content": []interface{}{
+			map[string]interface{}{
+				"type": "text",
+				"text": prompt,
+			}},
+	})
+	if err != nil {
+		log.Printf("can't create message from content: %v", err)
+		return err
+	}
+	log.Printf("message: %v", message.GetStructValue().AsMap())
+
+	messages, err := structpb.NewList([]interface{}{
+		message.GetStructValue().AsMap(),
+	})
+	if err != nil {
+		log.Printf("can't create messages from message: %v", err)
+		return err
+	}
+	log.Printf("messages: %v", messages)
+
+	// Instances: the prompt to use with the text model
+	promptValue, err := structpb.NewValue(map[string]interface{}{
+		"anthropic_version": "vertex-2023-10-16",
+		"max_tokens":        parameters["maxTokens"].(int),
+		"stream":            false,
+		"messages":          messages.AsSlice(),
+	})
+	if err != nil {
+		log.Printf("can't create promptValue: %v", err)
+		return err
+	}
+	jsonbytes, _ := protojson.Marshal(promptValue)
+	log.Printf("jsonbytes: %s", jsonbytes)
+
+	/*
+		messagesValue, err := structpb.NewValue(map[string]interface{}{
+			"messages": messages.AsSlice(),
+		})
+		if err != nil {
+			log.Printf("can't create messagesValue: %v", err)
+
+			return err
+		}
+	*/
+
+	// PredictRequest: create the model prediction request
+	req := &aiplatformpb.PredictRequest{
+		Endpoint:  url,
+		Instances: []*structpb.Value{message},
+		//Parameters: parametersValue,
+	}
+
+	// PredictResponse: receive the response from the model
+	resp, err := client.Predict(ctx, req)
+	if err != nil {
+		fmt.Fprintf(w, "error in prediction: %v", err)
+		return err
+	}
+
+	fmt.Fprintf(w, "text-prediction response: %v", resp.Predictions[0])
+	return nil
 }
