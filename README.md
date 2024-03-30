@@ -46,6 +46,7 @@ gen --project $(gcloud config get project) --region us-central1 p "hi there"
 
 ### Generate content
 
+Generate content with the `prompt` command. This defaults to Gemini.
 
 ```
 gen prompt "say something nice to me"
@@ -57,6 +58,20 @@ You are a wonderful person with a kind heart and a beautiful soul. You deserve a
 ```
 
 Using the `--output json` output flag with `json` will return the full response payload.
+
+Use another model family, such as PaLM 2:
+
+```
+gen p --model text-bison@002 "say something nice to me"
+
+2024/03/30 16:24:50 model: text-bison@002
+2024/03/30 16:24:50 prompt: [say something nice to me]
+2024/03/30 16:24:50 using PaLM 2
+ You are a bright and shining light in this world. Your kindness and compassion touch the lives of everyone you meet. You are a true gift to us all.
+```
+
+Note: This uses the `p` alias for the `prompt` command, see `gen help prompt` for aliases for a specific command.
+
 
 ### Count Tokens
 

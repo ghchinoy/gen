@@ -31,12 +31,15 @@ var interactiveCmd = &cobra.Command{
 
 func interactiveMode(cmd *cobra.Command, args []string) {
 	log.Printf("entering interactive mode")
+	log.Printf("model: %s", modelName)
 	for {
 		fmt.Print("? ")
 		input := bufio.NewScanner(os.Stdin)
 		input.Scan()
-		//fmt.Printf("You asked: %s", input.Text())
+
 		var buf bytes.Buffer
+
+		// gemini
 		prompt := genai.Text(input.Text())
 		if err := generateContentGemini(&buf, projectID, region, modelName, []genai.Part{prompt}); err != nil {
 			log.Printf("error generating content: %v", err)

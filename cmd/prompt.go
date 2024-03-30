@@ -86,7 +86,7 @@ func useGeminiModel(projectID string, region string, modelName string, args []st
 
 // usePaLMModel calls PaLM's generate content method
 func usePaLMModel(projectID string, region string, modelName string, args []string) error {
-	log.Print("using PaLM2")
+	log.Print("using PaLM 2")
 	prompt := args[0]
 	parameters := map[string]interface{}{
 		"temperature":     0.8,
@@ -99,7 +99,7 @@ func usePaLMModel(projectID string, region string, modelName string, args []stri
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
-	log.Printf("generated content: %s", buf.String())
+	fmt.Printf("%s\n", buf.String())
 	return nil
 }
 
@@ -200,8 +200,22 @@ func generateContentPaLM(w io.Writer, prompt, projectID, location, publisher, mo
 		return err
 	}
 
-	fmt.Fprintf(w, "text-prediction response: %v", resp.Predictions[0])
+	if outputtype == "json" {
+		rb, _ := json.MarshalIndent(resp, "", "  ")
+		fmt.Fprintln(w, string(rb))
+	} else {
+		if len(resp.Predictions) > 0 {
+			var r PaLMResponse
+			structbytes, _ := protojson.Marshal(resp)
+			err := json.Unmarshal(structbytes, &r)
+			if err != nil {
+				return fmt.Errorf("unable to convert to struct: %v", err)
+			}
+			fmt.Fprintf(w, "%v", r.Predictions[0].Content)
+		}
+	}
 	return nil
+
 }
 
 // generateContentClaude generates text from prompt and configurations provided.
@@ -289,4 +303,46 @@ func generateContentClaude(w io.Writer, prompt, projectID, location, publisher, 
 
 	fmt.Fprintf(w, "text-prediction response: %v", resp.Predictions[0])
 	return nil
+}
+
+type PaLMResponse struct {
+	Predictions []Prediction `json:"predictions"`
+	Metadata    Metadata     `json:"metadata"`
+}
+
+type Prediction struct {
+	CitationMetadata CitationMetadata `json:"citationMetadata,omitempty"`
+	Content          string           `json:"content,omitempty"`
+	SafetyAttributes SafetyAttributes `json:"safetyAttributes,omitempty"`
+}
+
+type CitationMetadata struct {
+	Citations []interface{} `json:"citations"`
+}
+
+type SafetyAttributes struct {
+	Blocked       bool           `json:"blocked,omitempty"`
+	Categories    []string       `json:"categories,omitempty"`
+	SafetyRatings []SafetyRating `json:"safetyRatings,omitempty"`
+}
+
+type SafetyRating struct {
+	Category         string  `json:"category,omitempty"`
+	ProbabilityScore float32 `json:"probabilityScore,omitempty"`
+	Severity         string  `json:"severity,omitempty"`
+	SeverityScore    float32 `json:"severityScore,omitempty"`
+}
+
+type Metadata struct {
+	TokenMetadata TokenMetadata `json:"tokenMetadata"`
+}
+
+type TokenMetadata struct {
+	InputTokenCount  TokenMetadataDetails `json:"inputTokenCount,omitempty"`
+	OutputTokenCount TokenMetadataDetails `json:"outputTokenCount,omitempty"`
+}
+
+type TokenMetadataDetails struct {
+	TotalBillableCharacters int `json:"totalBillableCharacters,omitempty"`
+	TotalTokens             int `json:"totalTokens,omitempty"`
 }
