@@ -25,6 +25,16 @@ gen --project $PROJECT_ID --region $LOCATION prompt "say something nice to me"
 export PROJECT_ID=$(gcloud config get project)
 export LOCATION=us-central1
 
+gen --project $PROJECT_ID --region $LOCATION tokens "hi how are you today"
+```
+
+or for a very long prompt
+
+
+```
+export PROJECT_ID=$(gcloud config get project)
+export LOCATION=us-central1
+
 gen --project $PROJECT_ID --region $LOCATION tokens --file VeryLongPromptFile.txt
 ```
 
