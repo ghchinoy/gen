@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"cloud.google.com/go/vertexai/genai"
 	"github.com/spf13/cobra"
@@ -32,6 +33,10 @@ var interactiveCmd = &cobra.Command{
 func interactiveMode(cmd *cobra.Command, args []string) {
 	log.Printf("entering interactive mode")
 	log.Printf("model: %s", modelName)
+	if !strings.Contains(modelName, "gemini") {
+		log.Print("Apologies, only gemini models at this time")
+		os.Exit(0)
+	}
 	for {
 		fmt.Print("? ")
 		input := bufio.NewScanner(os.Stdin)
