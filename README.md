@@ -10,6 +10,24 @@ gen prompt "say something nice to me"
 
 To get the list of commands, use `gen` by itself.
 
+### Generate content
+
+```
+export PROJECT_ID=$(gcloud config get project)
+export LOCATION=us-central1
+
+gen --project $PROJECT_ID --region $LOCATION prompt "say something nice to me"
+```
+
+### Count Tokens
+
+```
+export PROJECT_ID=$(gcloud config get project)
+export LOCATION=us-central1
+
+gen --project $PROJECT_ID --region $LOCATION tokens --file VeryLongPromptFile.txt
+```
+
 
 ## Installing
 

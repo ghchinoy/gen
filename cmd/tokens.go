@@ -12,10 +12,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var promptFile string
+
 func init() {
 	rootCmd.AddCommand(tokensCmd)
 
 	tokensCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro", "model name")
+
+	tokensCmd.PersistentFlags().StringVarP(&promptFile, "file", "f", "", "prompt file")
 }
 
 var tokensCmd = &cobra.Command{
@@ -28,10 +32,20 @@ var tokensCmd = &cobra.Command{
 
 // countTokensForPrompt is the cobra implementation of countTokens
 func countTokensForPrompt(cmd *cobra.Command, args []string) {
-	if len(args) == 0 {
-		log.Fatal("requires a prompt to count tokens")
+	var prompt string
+	if promptFile != "" { // read in file
+		promptBytes, err := os.ReadFile(promptFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		prompt = string(promptBytes)
+	} else {
+		if len(args) == 0 {
+			log.Fatal("requires a prompt to count tokens")
+		}
+		prompt = args[0]
 	}
-	prompt := args[0]
+
 	err := countTokens(os.Stdout, string(prompt), projectID, region, modelName)
 	if err != nil {
 		log.Fatal(err)
