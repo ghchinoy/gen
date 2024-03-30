@@ -1,8 +1,13 @@
 package cmd
 
 import (
+	"bufio"
+	"bytes"
+	"fmt"
 	"log"
+	"os"
 
+	"cloud.google.com/go/vertexai/genai"
 	"github.com/spf13/cobra"
 )
 
@@ -26,5 +31,19 @@ var interactiveCmd = &cobra.Command{
 }
 
 func interactiveMode(cmd *cobra.Command, args []string) {
-	log.Printf("interactive mode tbd")
+	log.Printf("entering interactive mode")
+	for {
+		fmt.Print("? ")
+		input := bufio.NewScanner(os.Stdin)
+		input.Scan()
+		//fmt.Printf("You asked: %s", input.Text())
+		var buf bytes.Buffer
+		prompt := genai.Text(input.Text())
+		if err := generateContentGemini(&buf, projectID, region, modelName, []genai.Part{prompt}); err != nil {
+			log.Printf("error generating content: %v", err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("%s\n\n", buf.String())
+	}
 }
