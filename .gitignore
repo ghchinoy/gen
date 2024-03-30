@@ -1,0 +1,4 @@
+# Go workspace file
+go.work
+
+gen
