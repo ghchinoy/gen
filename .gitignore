@@ -2,4 +2,4 @@
 go.work
 
 samples/
-gen
+dist/
