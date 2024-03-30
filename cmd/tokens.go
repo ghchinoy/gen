@@ -18,14 +18,13 @@ func init() {
 	rootCmd.AddCommand(tokensCmd)
 
 	tokensCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro", "model name")
-
 	tokensCmd.PersistentFlags().StringVarP(&promptFile, "file", "f", "", "prompt file")
 }
 
 var tokensCmd = &cobra.Command{
 	Use:     "tokens",
 	Aliases: []string{"t", "count", "tokencount", "tc"},
-	Short:   "count tokens for prompt",
+	Short:   "Count tokens for a prompt",
 	Long:    `Returns the count of tokens for a provided prompt`,
 	Run:     countTokensForPrompt,
 }
@@ -50,7 +49,6 @@ func countTokensForPrompt(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 // countTokens returns the number of tokens for this prompt.

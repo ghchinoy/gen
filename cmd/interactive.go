@@ -19,13 +19,12 @@ func init() {
 	rootCmd.AddCommand(interactiveCmd)
 
 	interactiveCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro", "model name")
-
 }
 
 var interactiveCmd = &cobra.Command{
 	Use:     "interactive",
 	Aliases: []string{"i"},
-	Short:   "interactive mode",
+	Short:   "Interactive mode",
 	Long:    `Interactive mode is a chat mode where you can interact with the model.`,
 	Run:     interactiveMode,
 }

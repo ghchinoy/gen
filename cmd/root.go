@@ -31,6 +31,7 @@ func Execute() error {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	rootCmd.Root().CompletionOptions.DisableDefaultCmd = true
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/gen/gen.yaml)")
 	rootCmd.PersistentFlags().StringVar(&projectID, "project", "", "Google Cloud Project ID")
@@ -59,6 +60,13 @@ func initConfig() {
 	//viper.SetEnvPrefix("GEN")
 	viper.AutomaticEnv()
 
+	if viper.IsSet("PROJECT_ID") {
+		rootCmd.Flags().Set("project", fmt.Sprintf("%v", viper.Get("PROJECT_ID")))
+	}
+	if viper.IsSet("REGION") {
+		rootCmd.Flags().Set("region", fmt.Sprintf("%v", viper.Get("REGION")))
+	}
+
 	// check if there are prefixed env vars and bind them
 	// ref. h/t to https://carolynvanslyck.com/blog/2020/08/sting-of-the-viper/
 	rootCmd.Flags().VisitAll(func(f *pflag.Flag) {
@@ -76,7 +84,5 @@ func initConfig() {
 // apiEndpoint returns the URL of the Vertex API endpoint based upon the
 // user's choice for the region
 func apiEndpoint() string {
-	var apiEndpoint string
-	apiEndpoint = fmt.Sprintf("%s-aiplatform.googleapis.com:443", region)
-	return apiEndpoint
+	return fmt.Sprintf("%s-aiplatform.googleapis.com:443", region)
 }

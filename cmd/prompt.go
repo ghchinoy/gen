@@ -49,7 +49,6 @@ func generateContentForModel(cmd *cobra.Command, args []string) {
 		fmt.Println("please provide prompt")
 		os.Exit(1)
 	}
-	log.Printf("project / region: %s / %s", projectID, region)
 	log.Printf("model: %s", modelName)
 	log.Printf("prompt: %s", args)
 

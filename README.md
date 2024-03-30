@@ -8,15 +8,47 @@
 gen prompt "say something nice to me"
 ```
 
-To get the list of commands, use `gen --help`.
+To get the list of commands, use `gen help`.
 
-### Generate content
+Help is also available for each command, such as `gen help tokens`.
 
+### Setup 
+
+#### Installing
+
+Install `gen` on your machine via:
+
+```
+go install github.com/ghchinoy/gen@latest
+```
+
+
+#### Authentication
+
+[Standard methods of authenticating](https://cloud.google.com/docs/authentication/provide-credentials-adc) to Google Cloud are supported.
+
+#### GCP Project & Region
+
+Set your Google Cloud Project either via the env var `PROJECT_ID` or via the flag `--project` and your region either via the env var `REGION` or via the flag `--region`
+
+Using env vars
 ```
 export PROJECT_ID=$(gcloud config get project)
 export REGION=us-central1
+```
 
-gen --project $PROJECT_ID --region $LOCATION prompt "say something nice to me"
+Using flags
+
+```
+gen --project $(gcloud config get project) --region us-central1 p "hi there"
+```
+
+
+### Generate content
+
+
+```
+gen prompt "say something nice to me"
 
 2024/03/30 15:29:13 model: gemini-1.0-pro
 2024/03/30 15:29:13 prompt: [say something nice to me]
@@ -29,20 +61,15 @@ Using the `--output json` output flag with `json` will return the full response 
 ### Count Tokens
 
 ```
-export PROJECT_ID=$(gcloud config get project)
-export REGION=us-central1
+gen tokens "hi how are you today"
 
-gen --project $PROJECT_ID --region $REGION tokens "hi how are you today"
+Number of tokens for the prompt: 5
 ```
 
-or for a very long prompt
-
+or for a very long prompt in file
 
 ```
-export PROJECT_ID=$(gcloud config get project)
-export REGION=us-central1
-
-gen --project $PROJECT_ID --region $REGION tokens --file VeryLongPromptFile.txt
+gen tokens --file VeryLongPromptFile.txt
 ```
 
 ### Interactive mode
@@ -50,10 +77,7 @@ gen --project $PROJECT_ID --region $REGION tokens --file VeryLongPromptFile.txt
 Multiple single-turn interactions (synthetic context and support for models with a chat api planned):
 
 ```
-export PROJECT_ID=$(gcloud config get project)
-export REGION=us-central1
-
-gen --project $PROJECT_ID --region $REGION i
+gen interactive
 
 2024/03/30 15:27:33 entering interactive mode
 ? Hi say something nice to me
@@ -64,20 +88,6 @@ I am Gemini, a multi-modal AI language model developed by Google. I don't have a
 
 ```
 
-
-## Installing
-
-Install `gen` on your machine via:
-
-```
-go install github.com/ghchinoy/gen@latest
-```
-
-See Usage for more information..
-
-# Authentication
-
-[Standard methods of authenticating](https://cloud.google.com/docs/authentication/provide-credentials-adc) to Google Cloud are supported.
 
 
 

@@ -10,7 +10,5 @@ var (
 )
 
 func main() {
-
 	cmd.Execute()
-
 }
