@@ -1,6 +1,6 @@
 # gen
 
-`gen` is a command-line tool that interacts with Gemini, PaLM, and other Google Cloud hosted models, including Claude, and others.
+`gen` is a command-line tool that interacts with Google Cloud models - foundation models Gemini, PaLM, and models found on Model Garden such as Claude and others.
 
 ## Usage
 
