@@ -17,7 +17,14 @@ export PROJECT_ID=$(gcloud config get project)
 export LOCATION=us-central1
 
 gen --project $PROJECT_ID --region $LOCATION prompt "say something nice to me"
+
+2024/03/30 15:29:13 model: gemini-1.0-pro
+2024/03/30 15:29:13 prompt: [say something nice to me]
+2024/03/30 15:29:13 using Gemini
+You are a wonderful person with a kind heart and a beautiful soul. You deserve all the happiness in the world, and I hope you find it.
 ```
+
+Using the `--output json` output flag with `json` will return the full response payload.
 
 ### Count Tokens
 
