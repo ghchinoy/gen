@@ -81,7 +81,7 @@ func useGeminiModel(projectID string, region string, modelName string, args []st
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
-	log.Printf("generated content: %s", buf.String())
+	fmt.Printf("%s\n", buf.String())
 	return nil
 }
 
@@ -135,8 +135,20 @@ func generateContentGemini(w io.Writer, projectID string, region string, modelNa
 	if err != nil {
 		return fmt.Errorf("error generating content: %w", err)
 	}
-	rb, _ := json.MarshalIndent(resp, "", "  ")
-	fmt.Fprintln(w, string(rb))
+	if outputtype == "json" {
+		rb, _ := json.MarshalIndent(resp, "", "  ")
+		fmt.Fprintln(w, string(rb))
+	} else {
+		if len(resp.Candidates) > 0 {
+			var all []string
+			for _, v := range resp.Candidates[0].Content.Parts {
+				all = append(all, fmt.Sprintf("%s", v))
+			}
+			fmt.Fprintf(w, "%s", strings.Join(all, " "))
+		} else {
+			log.Printf("Candidate length 0")
+		}
+	}
 	return nil
 }
 
