@@ -14,7 +14,7 @@ To get the list of commands, use `gen --help`.
 
 ```
 export PROJECT_ID=$(gcloud config get project)
-export LOCATION=us-central1
+export REGION=us-central1
 
 gen --project $PROJECT_ID --region $LOCATION prompt "say something nice to me"
 
@@ -30,9 +30,9 @@ Using the `--output json` output flag with `json` will return the full response 
 
 ```
 export PROJECT_ID=$(gcloud config get project)
-export LOCATION=us-central1
+export REGION=us-central1
 
-gen --project $PROJECT_ID --region $LOCATION tokens "hi how are you today"
+gen --project $PROJECT_ID --region $REGION tokens "hi how are you today"
 ```
 
 or for a very long prompt
@@ -40,9 +40,9 @@ or for a very long prompt
 
 ```
 export PROJECT_ID=$(gcloud config get project)
-export LOCATION=us-central1
+export REGION=us-central1
 
-gen --project $PROJECT_ID --region $LOCATION tokens --file VeryLongPromptFile.txt
+gen --project $PROJECT_ID --region $REGION tokens --file VeryLongPromptFile.txt
 ```
 
 ### Interactive mode
@@ -51,9 +51,9 @@ Multiple single-turn interactions (synthetic context and support for models with
 
 ```
 export PROJECT_ID=$(gcloud config get project)
-export LOCATION=us-central1
+export REGION=us-central1
 
-gen --project $PROJECT_ID --region $LOCATION i
+gen --project $PROJECT_ID --region $REGION i
 
 2024/03/30 15:27:33 entering interactive mode
 ? Hi say something nice to me
