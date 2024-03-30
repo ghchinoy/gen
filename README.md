@@ -5,8 +5,11 @@
 ## Usage
 
 ```bash
-gen "say something nice to me"
+gen prompt "say something nice to me"
 ```
+
+To get the list of commands, use `gen` by itself.
+
 
 ## Installing
 
@@ -17,6 +20,10 @@ go install github.com/ghchinoy/gen@latest
 ```
 
 See Usage for more information..
+
+# Authentication
+
+[Standard methods of authenticating](https://cloud.google.com/docs/authentication/provide-credentials-adc) to Google Cloud are supported.
 
 
 
