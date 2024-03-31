@@ -27,19 +27,27 @@ go install github.com/ghchinoy/gen@latest
 
 [Standard methods of authenticating](https://cloud.google.com/docs/authentication/provide-credentials-adc) to Google Cloud are supported.
 
+```bash
+# set your GCP project
+gcloud config set project YOUR_PROJECT
+# login to obtain credentials
+gcloud auth application-default login
+```
+
 #### GCP Project & Region
 
 Set your Google Cloud Project either via the env var `PROJECT_ID` or via the flag `--project` and your region either via the env var `REGION` or via the flag `--region`
 
 Using env vars
-```
+
+```bash
 export PROJECT_ID=$(gcloud config get project)
 export REGION=us-central1
 ```
 
 Using flags
 
-```
+```bash
 gen --project $(gcloud config get project) --region us-central1 p "hi there"
 ```
 
@@ -48,9 +56,13 @@ gen --project $(gcloud config get project) --region us-central1 p "hi there"
 
 Generate content with the `prompt` command. This defaults to Gemini.
 
-```
+```bash
 gen prompt "say something nice to me"
+```
 
+This will result in:
+
+```
 2024/03/30 15:29:13 model: gemini-1.0-pro
 2024/03/30 15:29:13 prompt: [say something nice to me]
 2024/03/30 15:29:13 using Gemini
@@ -85,6 +97,8 @@ or for a very long prompt in file
 
 ```
 gen tokens --file VeryLongPromptFile.txt
+
+Number of tokens for the prompt: 1599681
 ```
 
 ### Interactive mode
@@ -95,6 +109,8 @@ Multiple single-turn interactions (synthetic context and support for models with
 gen interactive
 
 2024/03/30 15:27:33 entering interactive mode
+2024/03/30 15:27:33 type 'exit' or 'quit' to exit
+2024/03/30 15:27:33 model: gemini-1.0-pro
 ? Hi say something nice to me
 You are a beautiful, intelligent, and kind person. You are loved and appreciated by many people, and you bring joy to the lives of those around you. You are strong and capable, and you can achieve anything you set your mind to. I am proud of you, and I know you will continue to do great things.
 
@@ -103,8 +119,16 @@ I am Gemini, a multi-modal AI language model developed by Google. I don't have a
 
 ```
 
-
-
-
 ## Acknowledgements
 `gen` is inspired by Simon Willison's [llm tool](https://llm.datasette.io/en/stable/) as well as Eli Bendersky's [gemini-cli](https://github.com/eliben/gemini-cli). Both are super awesome, check them out!
+
+
+## License
+
+Apache 2.0; see [`LICENSE`](LICENSE) for details.
+
+## Disclaimer
+
+This project is not an official Google project. It is not supported by
+Google and Google specifically disclaims all warranties as to its quality,
+merchantability, or fitness for a particular purpose.
