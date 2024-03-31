@@ -56,7 +56,7 @@ func generateContentForModel(cmd *cobra.Command, args []string) {
 	var err error
 	if strings.HasPrefix(modelName, "gemini") {
 		err = useGeminiModel(projectID, region, modelName, args)
-	} else if strings.Contains(modelName, "bison") {
+	} else if strings.Contains(modelName, "text-bison") || strings.Contains(modelName, "text-unicorn") {
 		err = usePaLMModel(projectID, region, modelName, args)
 	} else if strings.HasPrefix(modelName, "medlm-") || strings.HasPrefix(modelName, "medpalm") {
 		err = usePaLMModel(projectID, region, modelName, args)
