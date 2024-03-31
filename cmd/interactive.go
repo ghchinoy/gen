@@ -31,8 +31,10 @@ var interactiveCmd = &cobra.Command{
 }
 
 func interactiveMode(cmd *cobra.Command, args []string) {
-	log.Printf("entering interactive mode")
+	log.Print("entering interactive mode")
+	log.Print("type 'exit' or 'quit' to exit")
 	log.Printf("model: %s", modelName)
+
 	if !strings.Contains(modelName, "gemini") {
 		log.Print("Apologies, only gemini models at this time")
 		os.Exit(0)
@@ -43,6 +45,11 @@ func interactiveMode(cmd *cobra.Command, args []string) {
 		input.Scan()
 
 		var buf bytes.Buffer
+
+		// quit | exit
+		if strings.EqualFold(input.Text(), "quit") || strings.EqualFold(input.Text(), "exit") {
+			os.Exit(0)
+		}
 
 		// gemini
 		prompt := genai.Text(input.Text())
