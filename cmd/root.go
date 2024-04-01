@@ -16,6 +16,7 @@ var (
 	region     string
 	projectID  string
 	outputtype string
+	logtype    string
 
 	rootCmd = &cobra.Command{
 		Use:   "gen",
@@ -38,6 +39,9 @@ func init() {
 	//rootCmd.MarkPersistentFlagRequired("project")
 	rootCmd.PersistentFlags().StringVar(&region, "region", "", "region for generative AI endpoint")
 	rootCmd.PersistentFlags().StringVar(&outputtype, "output", "text", "output type")
+
+	rootCmd.PersistentFlags().StringVar(&logtype, "log", "none", "logging output")
+
 }
 
 func initConfig() {
@@ -79,10 +83,4 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
-}
-
-// apiEndpoint returns the URL of the Vertex API endpoint based upon the
-// user's choice for the region
-func apiEndpoint() string {
-	return fmt.Sprintf("%s-aiplatform.googleapis.com:443", region)
 }

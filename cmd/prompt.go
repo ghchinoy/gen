@@ -49,8 +49,10 @@ func generateContentForModel(cmd *cobra.Command, args []string) {
 		fmt.Println("please provide prompt")
 		os.Exit(1)
 	}
-	log.Printf("model: %s", modelName)
-	log.Printf("prompt: %s", args)
+	if logtype != "none" {
+		log.Printf("model: %s", modelName)
+		log.Printf("prompt: %s", args)
+	}
 
 	// TODO better as a switch guarded by model list
 	var err error
@@ -73,7 +75,7 @@ func generateContentForModel(cmd *cobra.Command, args []string) {
 
 // useGeminiModel calls Gemini's generate content method
 func useGeminiModel(projectID string, region string, modelName string, args []string) error {
-	log.Print("using Gemini")
+	log.Printf("Gemini [%s]", modelName)
 	prompt := genai.Text(args[0])
 	var buf bytes.Buffer
 	if err := generateContentGemini(&buf, projectID, region, modelName, []genai.Part{prompt}); err != nil {
@@ -86,7 +88,9 @@ func useGeminiModel(projectID string, region string, modelName string, args []st
 
 // usePaLMModel calls PaLM's generate content method
 func usePaLMModel(projectID string, region string, modelName string, args []string) error {
-	log.Print("using PaLM 2")
+	if logtype != "quiet" {
+		log.Printf("PaLM 2 [%s]", modelName)
+	}
 	prompt := args[0]
 	parameters := map[string]interface{}{
 		"temperature":     0.8,
@@ -104,7 +108,9 @@ func usePaLMModel(projectID string, region string, modelName string, args []stri
 }
 
 func useClaudeModel(projectID string, region string, modelName string, args []string) error {
-	log.Print("using Anthropic")
+	if logtype != "quiet" {
+		log.Printf("Anthropic [%s]", modelName)
+	}
 	prompt := args[0]
 	parameters := map[string]interface{}{
 		//"temperature":     0.8,
@@ -168,8 +174,9 @@ func generateContentPaLM(w io.Writer, prompt, projectID, location, publisher, mo
 	// Endpoint
 	base := fmt.Sprintf("projects/%s/locations/%s/publishers/%s/models", projectID, location, publisher)
 	url := fmt.Sprintf("%s/%s", base, model)
-	log.Printf("url: %s", url)
-
+	if logtype != "none" {
+		log.Printf("url: %s", url)
+	}
 	// Instances: the prompt to use with the text model
 	promptValue, err := structpb.NewValue(map[string]interface{}{
 		"prompt": prompt,

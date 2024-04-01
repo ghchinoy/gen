@@ -38,6 +38,9 @@ func listModels(cmd *cobra.Command, args []string) {
 
 	data := [][]string{}
 	for _, v := range modelarray {
+		if strings.HasPrefix(v[0], "#") {
+			continue
+		}
 		data = append(data, []string{
 			v[0], // group
 			v[1], // type

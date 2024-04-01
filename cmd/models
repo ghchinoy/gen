@@ -1,13 +1,13 @@
 gemini,text,gemini-1.0-pro-001
 gemini,text,gemini-1.0-ultra-001
-gemini,multimodal,gemini-1.0-pro-vison-001
-gemini,multimodal,gemini-1.0-ultra-vison-001
+gemini,multimodal,gemini-1.0-pro-vision-001
+gemini,multimodal,gemini-1.0-ultra-vision-001
 gemini,multimodal,gemini-1.5-pro-preview-0215
 palm2,text,text-bison
 palm2,text,text-bison@001
 palm2,text,text-bison@002
-palm2,text,text-bison-32k
-palm2,text,text-bison-32k@002
+#palm2,text,text-bison-32k
+#palm2,text,text-bison-32k@002
 palm2,text,text-unicorn@001
 palm2,text,medlm-large
 palm2,text,medlm-medium
