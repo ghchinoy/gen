@@ -84,6 +84,23 @@ gen p --model text-bison@002 "say something nice to me"
 
 Note: This uses the `p` alias for the `prompt` command, see `gen help prompt` for aliases for a specific command.
 
+Use the `--config` flag to pass in model parameters, as a json file, such as:
+
+```bash
+gen p --model text-bison@002 --config config.json "say something nice to me"
+```
+
+Where `config.json` contains:
+
+```json
+{
+    "temperature":     0.95,
+    "maxOutputTokens": 1024,
+    "topP":            0.4,
+    "topK":            40
+}
+```
+
 
 ### Count Tokens
 
