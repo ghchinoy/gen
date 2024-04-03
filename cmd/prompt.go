@@ -20,7 +20,9 @@ import (
 )
 
 var (
-	modelName string
+	modelName       string
+	modelConfigFile string
+	//modelConfig     map[string]interface{}
 )
 
 func init() {
@@ -29,6 +31,7 @@ func init() {
 	//promptCmd.AddCommand(generateContentCmd)
 
 	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro", "model name")
+	promptCmd.PersistentFlags().StringVarP(&modelConfigFile, "config", "c", "", "model parameters")
 
 	//flag.StringVar(&modelName, "model", "gemini-1.0-pro", "generative model to use")
 	//flag.StringVar(&region, "region", "us-central1", "region to use")
@@ -92,12 +95,27 @@ func usePaLMModel(projectID string, region string, modelName string, args []stri
 		log.Printf("PaLM 2 [%s]", modelName)
 	}
 	prompt := args[0]
-	parameters := map[string]interface{}{
-		"temperature":     0.8,
-		"maxOutputTokens": 256,
-		"topP":            0.4,
-		"topK":            40,
+
+	// parameters from config file
+	var parameters map[string]interface{}
+	if modelConfigFile != "" {
+		var err error
+		parameters, err = readModelConfigFile(modelConfigFile)
+		if err != nil {
+			return err
+		}
+	} else { // default PaLM 2 model params
+		parameters = map[string]interface{}{
+			"temperature":     0.6,
+			"maxOutputTokens": 256,
+			"topP":            0.4,
+			"topK":            40,
+		}
 	}
+	if logtype != "none" {
+		log.Printf("config: %v", parameters)
+	}
+
 	var buf bytes.Buffer
 	if err := generateContentPaLM(&buf, prompt, projectID, region, "google", modelName, parameters); err != nil {
 		log.Printf("error generating content: %v", err)
@@ -310,6 +328,22 @@ func generateContentClaude(w io.Writer, prompt, projectID, location, publisher, 
 
 	fmt.Fprintf(w, "text-prediction response: %v", resp.Predictions[0])
 	return nil
+}
+
+// readModelConfigFile reads the model configuration file (JSON text file)
+func readModelConfigFile(configFile string) (map[string]interface{}, error) {
+	var config map[string]interface{}
+	data, err := os.ReadFile(modelConfigFile)
+	if err != nil {
+		return config, fmt.Errorf("error reading model config: %v", err)
+
+	}
+
+	err = json.Unmarshal(data, &config)
+	if err != nil {
+		return config, fmt.Errorf("error unmarshalling model config: %v", err)
+	}
+	return config, nil
 }
 
 type PaLMResponse struct {
