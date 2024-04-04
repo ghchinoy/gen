@@ -154,8 +154,31 @@ func generateContentGemini(w io.Writer, projectID string, region string, modelNa
 	}
 	gemini := client.GenerativeModel(modelName)
 
+	if modelConfigFile != "" {
+		modelConfig, err := os.ReadFile(modelConfigFile)
+		if err != nil {
+			return fmt.Errorf("error reading model config file: %w", err)
+		}
+		var config genai.GenerationConfig
+		err = json.Unmarshal(modelConfig, &config)
+		if err != nil {
+			return fmt.Errorf("error unmarshalling GenerationConfig from file: %w", err)
+		}
+		gemini.GenerationConfig = config
+		if logtype != "none" {
+			log.Printf("config: %v", config)
+		}
+	}
+
 	resp, err := gemini.GenerateContent(ctx, parts...)
 	if err != nil {
+		// needs more sensible parsing of error message
+		if strings.Contains(err.Error(), "lookup -aiplatform.googleapis.com:") {
+			log.Print("missing REGION")
+		}
+		if strings.Contains(err.Error(), "RESOURCE_PROJECT_INVALID") {
+			log.Print("missing PROJECT_ID")
+		}
 		return fmt.Errorf("error generating content: %w", err)
 	}
 	if outputtype == "json" {
