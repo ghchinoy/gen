@@ -84,6 +84,15 @@ gen p --model text-bison@002 "say something nice to me"
 
 Note: This uses the `p` alias for the `prompt` command, see `gen help prompt` for aliases for a specific command.
 
+If you have Anthropic's Claude activated from Model Garden, you can also use it this way:
+
+```bash
+gen p -m claude-3-haiku@20240307 "say something nice to me"
+```
+
+
+#### Model Configuration Parameters
+
 Use the `--config` flag to pass in model parameters, as a json file, such as:
 
 ```bash
