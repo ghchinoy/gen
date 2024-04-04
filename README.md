@@ -90,7 +90,7 @@ Use the `--config` flag to pass in model parameters, as a json file, such as:
 gen p --model text-bison@002 --config config.json "say something nice to me"
 ```
 
-Where `config.json` contains:
+Where `config.json` contains [PaLM 2 parameters](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text#request_body):
 
 ```json
 {
@@ -98,6 +98,17 @@ Where `config.json` contains:
     "maxOutputTokens": 1024,
     "topP":            0.4,
     "topK":            40
+}
+```
+
+or, for [Gemini](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini#request_body), containing the `generationConfig`:
+
+```json
+{
+    "temperature": 0.1,
+    "topP": 0.9,
+    "topK": 40,
+    "maxOutputTokens": 256
 }
 ```
 
