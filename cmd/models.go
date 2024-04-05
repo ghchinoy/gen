@@ -20,7 +20,7 @@ func init() {
 
 var modelsCmd = &cobra.Command{
 	Use:     "models",
-	Aliases: []string{"i"},
+	Aliases: []string{"m"},
 	Short:   "list available models",
 	Long:    `Lists available models, foundation, tuned, or Model Garden hosted.`,
 	Run:     listModels,
