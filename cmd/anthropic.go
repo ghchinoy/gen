@@ -15,6 +15,46 @@ import (
 	"google.golang.org/genproto/googleapis/api/httpbody"
 )
 
+// AnthropicRequest is the request to the Claude model.
+type AnthropicRequest struct {
+	AnthropicVersion string             `json:"anthropic_version,omitempty"`
+	MaxTokens        int                `json:"max_tokens,omitempty"`
+	Messages         []AnthropicMessage `json:"messages,omitempty"`
+	Stream           bool               `json:"stream,omitempty"`
+	TopP             float32            `json:"top_p,omitempty"`
+	TopK             int                `json:"top_k,omitempty"`
+	Temperature      float32            `json:"temperature,omitempty"`
+}
+
+// AnthropicMessage is a message to the Claude model.
+type AnthropicMessage struct {
+	Content []AnthropicContent `json:"content,omitempty"`
+	Role    string             `json:"role,omitempty"`
+}
+
+// AnthropicContent is the content of a message to the Claude model.
+type AnthropicContent struct {
+	Text string `json:"text,omitempty"`
+	Type string `json:"type,omitempty"`
+}
+
+// AnthropicResponse is the response from the Claude model.
+type AnthropicResponse struct {
+	ID           string             `json:"id,omitempty"`
+	Type         string             `json:"type,omitempty"`
+	Role         string             `json:"role,omitempty"`
+	Content      []AnthropicContent `json:"content,omitempty"`
+	Model        string             `json:"model,omitempty"`
+	StopReason   string             `json:"stop_reason,omitempty"`
+	StopSequence string             `json:"stop_sequence,omitempty"`
+	Usage        AnthropicUsage     `json:"usage,omitempty"`
+}
+
+type AnthropicUsage struct {
+	InputTokens  int `json:"input_tokens,omitempty"`
+	OutputTokens int `json:"output_tokens,omitempty"`
+}
+
 func useClaudeModel(projectID string, region string, modelName string, args []string) error {
 	if logtype != "quiet" {
 		log.Printf("Anthropic [%s]", modelName)

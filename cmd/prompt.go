@@ -346,85 +346,85 @@ func readModelConfigFile(configFile string) (map[string]interface{}, error) {
 	return config, nil
 }
 
-// AnthropicRequest is the request to the Claude model.
-type AnthropicRequest struct {
-	AnthropicVersion string             `json:"anthropic_version,omitempty"`
-	MaxTokens        int                `json:"max_tokens,omitempty"`
-	Messages         []AnthropicMessage `json:"messages,omitempty"`
-	Stream           bool               `json:"stream,omitempty"`
-	TopP             float32            `json:"top_p,omitempty"`
-	TopK             int                `json:"top_k,omitempty"`
-	Temperature      float32            `json:"temperature,omitempty"`
-}
+// // AnthropicRequest is the request to the Claude model.
+// type AnthropicRequest struct {
+// 	AnthropicVersion string             `json:"anthropic_version,omitempty"`
+// 	MaxTokens        int                `json:"max_tokens,omitempty"`
+// 	Messages         []AnthropicMessage `json:"messages,omitempty"`
+// 	Stream           bool               `json:"stream,omitempty"`
+// 	TopP             float32            `json:"top_p,omitempty"`
+// 	TopK             int                `json:"top_k,omitempty"`
+// 	Temperature      float32            `json:"temperature,omitempty"`
+// }
 
-// AnthropicMessage is a message to the Claude model.
-type AnthropicMessage struct {
-	Content []AnthropicContent `json:"content,omitempty"`
-	Role    string             `json:"role,omitempty"`
-}
+// // AnthropicMessage is a message to the Claude model.
+// type AnthropicMessage struct {
+// 	Content []AnthropicContent `json:"content,omitempty"`
+// 	Role    string             `json:"role,omitempty"`
+// }
 
-// AnthropicContent is the content of a message to the Claude model.
-type AnthropicContent struct {
-	Text string `json:"text,omitempty"`
-	Type string `json:"type,omitempty"`
-}
+// // AnthropicContent is the content of a message to the Claude model.
+// type AnthropicContent struct {
+// 	Text string `json:"text,omitempty"`
+// 	Type string `json:"type,omitempty"`
+// }
 
-// AnthropicResponse is the response from the Claude model.
-type AnthropicResponse struct {
-	ID           string             `json:"id,omitempty"`
-	Type         string             `json:"type,omitempty"`
-	Role         string             `json:"role,omitempty"`
-	Content      []AnthropicContent `json:"content,omitempty"`
-	Model        string             `json:"model,omitempty"`
-	StopReason   string             `json:"stop_reason,omitempty"`
-	StopSequence string             `json:"stop_sequence,omitempty"`
-	Usage        AnthropicUsage     `json:"usage,omitempty"`
-}
+// // AnthropicResponse is the response from the Claude model.
+// type AnthropicResponse struct {
+// 	ID           string             `json:"id,omitempty"`
+// 	Type         string             `json:"type,omitempty"`
+// 	Role         string             `json:"role,omitempty"`
+// 	Content      []AnthropicContent `json:"content,omitempty"`
+// 	Model        string             `json:"model,omitempty"`
+// 	StopReason   string             `json:"stop_reason,omitempty"`
+// 	StopSequence string             `json:"stop_sequence,omitempty"`
+// 	Usage        AnthropicUsage     `json:"usage,omitempty"`
+// }
 
-type AnthropicUsage struct {
-	InputTokens  int `json:"input_tokens,omitempty"`
-	OutputTokens int `json:"output_tokens,omitempty"`
-}
+// type AnthropicUsage struct {
+// 	InputTokens  int `json:"input_tokens,omitempty"`
+// 	OutputTokens int `json:"output_tokens,omitempty"`
+// }
 
-// PaLMResponse is the response from the PaLM model.
-type PaLMResponse struct {
-	Predictions []Prediction `json:"predictions"`
-	Metadata    Metadata     `json:"metadata"`
-}
+// // PaLMResponse is the response from the PaLM model.
+// type PaLMResponse struct {
+// 	Predictions []Prediction `json:"predictions"`
+// 	Metadata    Metadata     `json:"metadata"`
+// }
 
-type Prediction struct {
-	CitationMetadata CitationMetadata `json:"citationMetadata,omitempty"`
-	Content          string           `json:"content,omitempty"`
-	SafetyAttributes SafetyAttributes `json:"safetyAttributes,omitempty"`
-}
+// type Prediction struct {
+// 	CitationMetadata CitationMetadata `json:"citationMetadata,omitempty"`
+// 	Content          string           `json:"content,omitempty"`
+// 	SafetyAttributes SafetyAttributes `json:"safetyAttributes,omitempty"`
+// }
 
-type CitationMetadata struct {
-	Citations []interface{} `json:"citations"`
-}
+// type CitationMetadata struct {
+// 	Citations []interface{} `json:"citations"`
+// }
 
-type SafetyAttributes struct {
-	Blocked       bool           `json:"blocked,omitempty"`
-	Categories    []string       `json:"categories,omitempty"`
-	SafetyRatings []SafetyRating `json:"safetyRatings,omitempty"`
-}
+// type SafetyAttributes struct {
+// 	Blocked       bool           `json:"blocked,omitempty"`
+// 	Categories    []string       `json:"categories,omitempty"`
+// 	SafetyRatings []SafetyRating `json:"safetyRatings,omitempty"`
+// }
 
-type SafetyRating struct {
-	Category         string  `json:"category,omitempty"`
-	ProbabilityScore float32 `json:"probabilityScore,omitempty"`
-	Severity         string  `json:"severity,omitempty"`
-	SeverityScore    float32 `json:"severityScore,omitempty"`
-}
+// type SafetyRating struct {
+// 	Category         string  `json:"category,omitempty"`
+// 	ProbabilityScore float32 `json:"probabilityScore,omitempty"`
+// 	Severity         string  `json:"severity,omitempty"`
+// 	SeverityScore    float32 `json:"severityScore,omitempty"`
+// }
 
-type Metadata struct {
-	TokenMetadata TokenMetadata `json:"tokenMetadata"`
-}
+// type Metadata struct {
+// 	TokenMetadata TokenMetadata `json:"tokenMetadata"`
+// }
 
-type TokenMetadata struct {
-	InputTokenCount  TokenMetadataDetails `json:"inputTokenCount,omitempty"`
-	OutputTokenCount TokenMetadataDetails `json:"outputTokenCount,omitempty"`
-}
+// type TokenMetadata struct {
+// 	InputTokenCount  TokenMetadataDetails `json:"inputTokenCount,omitempty"`
+// 	OutputTokenCount TokenMetadataDetails `json:"outputTokenCount,omitempty"`
+// }
 
-type TokenMetadataDetails struct {
-	TotalBillableCharacters int `json:"totalBillableCharacters,omitempty"`
-	TotalTokens             int `json:"totalTokens,omitempty"`
-}
+// type TokenMetadataDetails struct {
+// 	TotalBillableCharacters int `json:"totalBillableCharacters,omitempty"`
+// 	TotalTokens             int `json:"totalTokens,omitempty"`
+// }

@@ -16,6 +16,49 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+// PaLMResponse is the response from the PaLM model.
+type PaLMResponse struct {
+	Predictions []Prediction `json:"predictions"`
+	Metadata    Metadata     `json:"metadata"`
+}
+
+type Prediction struct {
+	CitationMetadata CitationMetadata `json:"citationMetadata,omitempty"`
+	Content          string           `json:"content,omitempty"`
+	SafetyAttributes SafetyAttributes `json:"safetyAttributes,omitempty"`
+}
+
+type CitationMetadata struct {
+	Citations []interface{} `json:"citations"`
+}
+
+type SafetyAttributes struct {
+	Blocked       bool           `json:"blocked,omitempty"`
+	Categories    []string       `json:"categories,omitempty"`
+	SafetyRatings []SafetyRating `json:"safetyRatings,omitempty"`
+}
+
+type SafetyRating struct {
+	Category         string  `json:"category,omitempty"`
+	ProbabilityScore float32 `json:"probabilityScore,omitempty"`
+	Severity         string  `json:"severity,omitempty"`
+	SeverityScore    float32 `json:"severityScore,omitempty"`
+}
+
+type Metadata struct {
+	TokenMetadata TokenMetadata `json:"tokenMetadata"`
+}
+
+type TokenMetadata struct {
+	InputTokenCount  TokenMetadataDetails `json:"inputTokenCount,omitempty"`
+	OutputTokenCount TokenMetadataDetails `json:"outputTokenCount,omitempty"`
+}
+
+type TokenMetadataDetails struct {
+	TotalBillableCharacters int `json:"totalBillableCharacters,omitempty"`
+	TotalTokens             int `json:"totalTokens,omitempty"`
+}
+
 // usePaLMModel calls PaLM's generate content method
 func usePaLMModel(projectID string, region string, modelName string, args []string) error {
 	if logtype != "quiet" {
