@@ -36,7 +36,8 @@ var promptCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Prompt a model",
 	Long:    `Provide prompt parts to a model to generate content`,
-	Run:     generateContentForModel,
+	// Run:     generateContentForModel,
+	Run: generateContent,
 }
 
 // generateContentForModel prompts a model to generate content based on the provided prompt.
@@ -49,6 +50,9 @@ func generateContentForModel(cmd *cobra.Command, args []string) {
 		log.Printf("model: %s", modelName)
 		log.Printf("prompt: %s", args)
 	}
+
+	// TODO - Not sure why, but I don't think this is printing to stdout
+	fmt.Printf("/n --- Model name: %s ---", modelName)
 
 	// TODO better as a switch guarded by model list
 	var err error
@@ -67,6 +71,38 @@ func generateContentForModel(cmd *cobra.Command, args []string) {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
+}
+
+// generateContent prompts a model to generate content based on the provided prompt.
+func generateContent(cmd *cobra.Command, args []string) {
+
+	if len(args) == 0 {
+		// TODO replace with log fatal
+		fmt.Println("please provide prompt")
+		os.Exit(1)
+	}
+
+	if logtype != "none" {
+		log.Printf("model: %s", modelName)
+		log.Printf("prompt: %s", args)
+	}
+
+	fmt.Printf("/n Model name: %s", modelName)
+
+	// Lookup the model based on the name
+	m, ok := Models[modelName]
+	if !ok {
+		log.Printf("model '%s' is not supported", modelName)
+		// TODO replace with log.fatal
+		os.Exit(1)
+	}
+
+	err := m.Prompt(projectID, region, m.mName, args)
+	if err != nil {
+		log.Printf("error generating content: %v", err)
+		os.Exit(1)
+	}
+
 }
 
 // readModelConfigFile reads the model configuration file (JSON text file)

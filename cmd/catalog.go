@@ -1,137 +1,131 @@
 package cmd
 
-// A prompter is an interface that wraps prompting a generative model at a specific endpoint location
-type prompter interface {
-	// prompt(ctx context.Context, args []string) error
-	prompt(projectID string, region string, modelName string, args []string) error
-}
-
 // A Model sends prompts to a specific GenAI model using an Endpoint location, where the model is enabled and billed
 type Model struct {
-	Prompt   func(projectID string, region string, modelName string, args []string) error
-	endpoint Endpoint
-	mFamily  string
-	mType    string
-	mName    string
+	Prompt func(projectID string, region string, modelName string, args []string) error
+	// endpoint Endpoint
+	mFamily string
+	mType   string
+	mName   string
 }
 
 var Models map[string]Model = map[string]Model{
-	"Gemini_1_0_pro_001": {
+	"gemini-1.0-pro-001": {
 		Prompt:  useGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
-		mName:   "Gemini_1_0_pro_001",
+		mName:   "gemini-1.0-pro-001",
 	},
-	"Gemini_1_0_ultra_001": {
+	"gemini-1.0-ultra-001": {
 		Prompt:  useGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
-		mName:   "Gemini_1_0_ultra_001",
+		mName:   "gemini-1.0-ultra-001",
 	},
-	"Gemini_1_0_pro_vision_001": {
+	"gemini-1.0-pro-vision-001": {
 		Prompt:  useGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
-		mName:   "Gemini_1_0_pro_vision_001",
+		mName:   "gemini-1.0-pro-vision-001",
 	},
-	"Gemini_1_0_ultra_vision_001": {
+	"gemini-1.0-ultra-vision-001": {
 		Prompt:  useGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
-		mName:   "Gemini_1_0_ultra_vision_001",
+		mName:   "gemini-1.0-ultra-vision-001",
 	},
-	"Gemini_1_5_pro_preview_0215": {
+	"gemini-1.5-pro-preview-0215": {
 		Prompt:  useGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
-		mName:   "Gemini_1_5_pro_preview_0215",
+		mName:   "gemini-1.5-pro-preview-0215",
 	},
-	"Text_bison": {
+	"text-bison": {
 		Prompt:  usePaLMModel,
 		mFamily: "text",
 		mType:   "text",
-		mName:   "Text_bison",
+		mName:   "text-bison",
 	},
-	"Text_bison_001": {
+	"text-bison@001": {
 		Prompt:  usePaLMModel,
 		mFamily: "text",
 		mType:   "text",
-		mName:   "Text_bison_001",
+		mName:   "text-bison@001",
 	},
-	"Text_bison_002": {
+	"text-bison@002": {
 		Prompt:  usePaLMModel,
 		mFamily: "text",
 		mType:   "text",
-		mName:   "Text_bison_002",
+		mName:   "text-bison@002",
 	},
-	"Text_unicorn_001": {
+	"text-unicorn@001": {
 		Prompt:  usePaLMModel,
 		mFamily: "text",
 		mType:   "text",
-		mName:   "Text_unicorn_001",
+		mName:   "text-unicorn@001",
 	},
-	"Medlm_medium": {
+	"medlm-medium": {
 		Prompt:  usePaLMModel,
 		mFamily: "MultiModal",
 		mType:   "MultiModal",
-		mName:   "Medlm_medium",
+		mName:   "medlm-medium",
 	},
-	"Medlm_large": {
+	"medlm-large": {
 		Prompt:  usePaLMModel,
 		mFamily: "MultiModal",
 		mType:   "MultiModal",
-		mName:   "Medlm_large",
+		mName:   "medlm-large",
 	},
-	"Medpalm2_preview": {
+	"medpalm2@preview": {
 		Prompt:  usePaLMModel,
 		mFamily: "MultiModal",
 		mType:   "MultiModal",
-		mName:   "Medpalm2_preview",
+		mName:   "medpalm2@preview",
 	},
-	"Code_bison": {
+	"code-bison": {
 		mFamily: "Embeddings",
 		mType:   "Embeddings",
-		mName:   "Code_bison",
+		mName:   "code-bison",
 	},
-	"Code_bison_001": {
+	"code-bison@001": {
 		mFamily: "Embeddings",
 		mType:   "Embeddings",
-		mName:   "Code_bison_001",
+		mName:   "code-bison@001",
 	},
-	"Code_bison_002": {
+	"code-bison@002": {
 		mFamily: "Embeddings",
 		mType:   "Embeddings",
-		mName:   "Code_bison_002",
+		mName:   "code-bison@002",
 	},
-	"Code_bison_32k": {
+	"code-bison-32k": {
 		mFamily: "Embeddings",
 		mType:   "Embeddings",
-		mName:   "Code_bison_32k",
+		mName:   "code-bison-32k",
 	},
-	"Code_bison_32k_002": {
+	"code-bison-32k@002": {
 		mFamily: "Embeddings",
 		mType:   "Embeddings",
-		mName:   "Code_bison_32k_002",
+		mName:   "code-bison-32k@002",
 	},
-	"Code_gecko": {
+	"code-gecko": {
 		mFamily: "Embeddings",
 		mType:   "Embeddings",
-		mName:   "Code_gecko",
+		mName:   "code-gecko",
 	},
-	"Code_gecko_001": {
+	"code-gecko@001": {
 		mFamily: "Embeddings",
 		mType:   "Embeddings",
-		mName:   "Code_gecko_001",
+		mName:   "code-gecko@001",
 	},
-	"Code_gecko_002": {
+	"code-gecko@002": {
 		mFamily: "Embeddings",
 		mType:   "Embeddings",
-		mName:   "Code_gecko_002",
+		mName:   "code-gecko@002",
 	},
-	"Claude_3_haiku_20240307": {
+	"claude-3-haiku@20240307": {
 		Prompt:  useClaudeModel,
 		mFamily: "MultiModal",
 		mType:   "MultiModal",
-		mName:   "Claude_3_haiku_20240307",
+		mName:   "claude-3-haiku@20240307",
 	},
 }
