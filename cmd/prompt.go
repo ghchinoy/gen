@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 	// "google.golang.org/protobuf/encoding/protojson"
@@ -40,38 +39,42 @@ var promptCmd = &cobra.Command{
 	Run: generateContent,
 }
 
-// generateContentForModel prompts a model to generate content based on the provided prompt.
-func generateContentForModel(cmd *cobra.Command, args []string) {
-	if len(args) == 0 {
-		fmt.Println("please provide prompt")
-		os.Exit(1)
-	}
-	if logtype != "none" {
-		log.Printf("model: %s", modelName)
-		log.Printf("prompt: %s", args)
-	}
+// // generateContentForModel prompts a model to generate content based on the provided prompt.
+// func generateContentForModel(cmd *cobra.Command, args []string) {
 
-	// TODO - Not sure why, but I don't think this is printing to stdout
-	fmt.Printf("/n --- Model name: %s ---", modelName)
+// 	// Resolve unused argument
+// 	_ = cmd
 
-	// TODO better as a switch guarded by model list
-	var err error
-	if strings.HasPrefix(modelName, "gemini") {
-		err = useGeminiModel(projectID, region, modelName, args)
-	} else if strings.Contains(modelName, "text-bison") || strings.Contains(modelName, "text-unicorn") {
-		err = usePaLMModel(projectID, region, modelName, args)
-	} else if strings.HasPrefix(modelName, "medlm-") || strings.HasPrefix(modelName, "medpalm") {
-		err = usePaLMModel(projectID, region, modelName, args)
-	} else if strings.HasPrefix(modelName, "claude") {
-		err = useClaudeModel(projectID, region, modelName, args)
-	} else {
-		err = fmt.Errorf("model '%s' is not supported", modelName)
-	}
-	if err != nil {
-		log.Printf("error generating content: %v", err)
-		os.Exit(1)
-	}
-}
+// 	if len(args) == 0 {
+// 		fmt.Println("please provide prompt")
+// 		os.Exit(1)
+// 	}
+// 	if logtype != "none" {
+// 		log.Printf("model: %s", modelName)
+// 		log.Printf("prompt: %s", args)
+// 	}
+
+// 	// TODO - Not sure why, but I don't think this is printing to stdout
+// 	fmt.Printf("/n --- Model name: %s ---", modelName)
+
+// 	// TODO better as a switch guarded by model list
+// 	var err error
+// 	if strings.HasPrefix(modelName, "gemini") {
+// 		err = useGeminiModel(projectID, region, modelName, args)
+// 	} else if strings.Contains(modelName, "text-bison") || strings.Contains(modelName, "text-unicorn") {
+// 		err = usePaLMModel(projectID, region, modelName, args)
+// 	} else if strings.HasPrefix(modelName, "medlm-") || strings.HasPrefix(modelName, "medpalm") {
+// 		err = usePaLMModel(projectID, region, modelName, args)
+// 	} else if strings.HasPrefix(modelName, "claude") {
+// 		err = useClaudeModel(projectID, region, modelName, args)
+// 	} else {
+// 		err = fmt.Errorf("model '%s' is not supported", modelName)
+// 	}
+// 	if err != nil {
+// 		log.Printf("error generating content: %v", err)
+// 		os.Exit(1)
+// 	}
+// }
 
 // generateContent prompts a model to generate content based on the provided prompt.
 func generateContent(cmd *cobra.Command, args []string) {
@@ -107,6 +110,9 @@ func generateContent(cmd *cobra.Command, args []string) {
 
 // readModelConfigFile reads the model configuration file (JSON text file)
 func readModelConfigFile(configFile string) (map[string]interface{}, error) {
+
+	// Resolve unused argument
+	_ = configFile
 	var config map[string]interface{}
 	data, err := os.ReadFile(modelConfigFile)
 	if err != nil {

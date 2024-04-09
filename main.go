@@ -5,8 +5,8 @@ import (
 )
 
 var (
-	projectID string
-	region    string
+// projectID string
+// region    string
 )
 
 func main() {

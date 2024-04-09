@@ -77,6 +77,10 @@ func useClaudeModel(projectID string, region string, modelName string, args []st
 
 // generateContentClaude generates text from prompt and configurations provided.
 func generateContentClaude(w io.Writer, prompt, projectID, location, publisher, model string, parameters map[string]interface{}) error {
+
+	// Resolve unused argument
+	_ = parameters
+
 	ctx := context.Background()
 
 	apiEndpoint := fmt.Sprintf("%s-aiplatform.googleapis.com:443", location)
