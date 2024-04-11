@@ -1,6 +1,9 @@
 package model
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 // A Model sends prompts to a specific GenAI model using an Endpoint location, where the model is enabled and billed
 type Model struct {
@@ -141,5 +144,10 @@ var Models map[string]Model = map[string]Model{
 //
 //	time being to get course grained refactoring working
 func (m Model) Use(ctx context.Context, cfg Config, args []string) error {
-	return m.prompt(ctx, m.MName, cfg, args)
+	if m.prompt != nil {
+		return m.prompt(ctx, m.MName, cfg, args)
+	}
+
+	return fmt.Errorf("Model: `%s` does not currently implement the `Use` method", m.MName)
+
 }
