@@ -61,16 +61,16 @@ type TokenMetadataDetails struct {
 
 // usePaLMModel calls PaLM's generate content method
 func UsePaLMModel(ctx context.Context, modelName string, cfg Config, args []string) error {
-	if logtype != "quiet" {
+	if cfg.LogType != "quiet" {
 		log.Printf("PaLM 2 [%s]", modelName)
 	}
 	prompt := args[0]
 
 	// parameters from config file
 	var parameters map[string]interface{}
-	if modelConfigFile != "" {
+	if cfg.ConfigFile != "" {
 		var err error
-		parameters, err = readModelConfigFile(modelConfigFile)
+		parameters, err = cfg.ReadModelConfigFile()
 		if err != nil {
 			return err
 		}
@@ -82,12 +82,13 @@ func UsePaLMModel(ctx context.Context, modelName string, cfg Config, args []stri
 			"topK":            40,
 		}
 	}
-	if logtype != "none" {
+	if cfg.LogType != "none" {
 		log.Printf("config: %v", parameters)
 	}
 
 	var buf bytes.Buffer
-	if err := generateContentPaLM(&buf, prompt, projectID, region, "google", modelName, parameters); err != nil {
+	// TODO - If "google" is hard coded, then look at refactoring it out as an argument
+	if err := generateContentPaLM(ctx, modelName, cfg, &buf, prompt, "google", parameters); err != nil {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
@@ -96,10 +97,9 @@ func UsePaLMModel(ctx context.Context, modelName string, cfg Config, args []stri
 }
 
 // generateContentPaLM generates text from prompt and configurations provided.
-func generateContentPaLM(w io.Writer, prompt, projectID, location, publisher, model string, parameters map[string]interface{}) error {
-	ctx := context.Background()
+func generateContentPaLM(ctx context.Context, modelName string, cfg Config, w io.Writer, prompt, publisher string, parameters map[string]interface{}) error {
 
-	apiEndpoint := fmt.Sprintf("%s-aiplatform.googleapis.com:443", location)
+	apiEndpoint := fmt.Sprintf("%s-aiplatform.googleapis.com:443", cfg.RegionID)
 
 	client, err := aiplatform.NewPredictionClient(ctx, option.WithEndpoint(apiEndpoint))
 	if err != nil {
@@ -110,9 +110,9 @@ func generateContentPaLM(w io.Writer, prompt, projectID, location, publisher, mo
 
 	// PredictRequest requires an endpoint, instances, and parameters
 	// Endpoint
-	base := fmt.Sprintf("projects/%s/locations/%s/publishers/%s/models", projectID, location, publisher)
-	url := fmt.Sprintf("%s/%s", base, model)
-	if logtype != "none" {
+	base := fmt.Sprintf("projects/%s/locations/%s/publishers/%s/models", cfg.ProjectID, cfg.RegionID, publisher)
+	url := fmt.Sprintf("%s/%s", base, modelName)
+	if cfg.LogType != "none" {
 		log.Printf("url: %s", url)
 	}
 	// Instances: the prompt to use with the text model
@@ -145,7 +145,7 @@ func generateContentPaLM(w io.Writer, prompt, projectID, location, publisher, mo
 		return err
 	}
 
-	if outputtype == "json" {
+	if cfg.OutputType == "json" {
 		rb, _ := json.MarshalIndent(resp, "", "  ")
 		fmt.Fprintln(w, string(rb))
 	} else {

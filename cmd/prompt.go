@@ -115,7 +115,7 @@ func generateContent(cmd *cobra.Command, args []string) {
 
 	ctx := context.Background()
 
-	err = m.Prompt(ctx, cfg, args)
+	err = m.Use(ctx, cfg, args)
 	if err != nil {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
