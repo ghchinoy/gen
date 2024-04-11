@@ -56,7 +56,7 @@ type AnthropicUsage struct {
 }
 
 func UseClaudeModel(ctx context.Context, modelName string, cfg Config, args []string) error {
-	if Logtype != "quiet" {
+	if cfg.LogType != "quiet" {
 		log.Printf("Anthropic [%s]", modelName)
 	}
 	prompt := args[0]
@@ -67,7 +67,7 @@ func UseClaudeModel(ctx context.Context, modelName string, cfg Config, args []st
 		//"topK":            40,
 	}
 	var buf bytes.Buffer
-	if err := generateContentClaude(&buf, prompt, projectID, region, "anthropic", modelName, parameters); err != nil {
+	if err := generateContentClaude(ctx, modelName, cfg, &buf, prompt, parameters); err != nil {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
@@ -76,14 +76,12 @@ func UseClaudeModel(ctx context.Context, modelName string, cfg Config, args []st
 }
 
 // generateContentClaude generates text from prompt and configurations provided.
-func generateContentClaude(w io.Writer, prompt, projectID, location, publisher, model string, parameters map[string]interface{}) error {
+func generateContentClaude(ctx context.Context, modelName string, cfg Config, w io.Writer, prompt string, parameters map[string]interface{}) error {
 
 	// Resolve unused argument
 	_ = parameters
 
-	ctx := context.Background()
-
-	apiEndpoint := fmt.Sprintf("%s-aiplatform.googleapis.com:443", location)
+	apiEndpoint := fmt.Sprintf("%s-aiplatform.googleapis.com:443", cfg.RegionID)
 
 	client, err := aiplatform.NewPredictionClient(ctx, option.WithEndpoint(apiEndpoint))
 	if err != nil {
@@ -94,9 +92,9 @@ func generateContentClaude(w io.Writer, prompt, projectID, location, publisher, 
 
 	// PredictRequest requires an endpoint, instances, and parameters
 	// Endpoint
-	base := fmt.Sprintf("projects/%s/locations/%s/publishers/%s/models", projectID, location, publisher)
-	url := fmt.Sprintf("%s/%s", base, model)
-	if Logtype != "none" {
+	base := fmt.Sprintf("projects/%s/locations/%s/publishers/%s/models", cfg.ProjectID, cfg.RegionID, "anthropic")
+	url := fmt.Sprintf("%s/%s", base, modelName)
+	if cfg.LogType != "none" {
 		log.Printf("url: %s", url)
 	}
 
@@ -138,7 +136,7 @@ func generateContentClaude(w io.Writer, prompt, projectID, location, publisher, 
 		return err
 	}
 
-	if Outputtype == "json" {
+	if cfg.OutputType == "json" {
 		fmt.Fprintln(w, string(resp.Data))
 	} else {
 		var r AnthropicResponse

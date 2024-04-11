@@ -87,8 +87,8 @@ func UsePaLMModel(ctx context.Context, modelName string, cfg Config, args []stri
 	}
 
 	var buf bytes.Buffer
-	// TODO - If "google" is hard coded, then look at refactoring it out as an argument
-	if err := generateContentPaLM(ctx, modelName, cfg, &buf, prompt, "google", parameters); err != nil {
+
+	if err := generateContentPaLM(ctx, modelName, cfg, &buf, prompt, parameters); err != nil {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
@@ -97,7 +97,7 @@ func UsePaLMModel(ctx context.Context, modelName string, cfg Config, args []stri
 }
 
 // generateContentPaLM generates text from prompt and configurations provided.
-func generateContentPaLM(ctx context.Context, modelName string, cfg Config, w io.Writer, prompt, publisher string, parameters map[string]interface{}) error {
+func generateContentPaLM(ctx context.Context, modelName string, cfg Config, w io.Writer, prompt string, parameters map[string]interface{}) error {
 
 	apiEndpoint := fmt.Sprintf("%s-aiplatform.googleapis.com:443", cfg.RegionID)
 
@@ -110,7 +110,7 @@ func generateContentPaLM(ctx context.Context, modelName string, cfg Config, w io
 
 	// PredictRequest requires an endpoint, instances, and parameters
 	// Endpoint
-	base := fmt.Sprintf("projects/%s/locations/%s/publishers/%s/models", cfg.ProjectID, cfg.RegionID, publisher)
+	base := fmt.Sprintf("projects/%s/locations/%s/publishers/%s/models", cfg.ProjectID, cfg.RegionID, "google")
 	url := fmt.Sprintf("%s/%s", base, modelName)
 	if cfg.LogType != "none" {
 		log.Printf("url: %s", url)

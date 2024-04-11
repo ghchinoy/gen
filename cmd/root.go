@@ -10,23 +10,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	// Used for flags.
-	cfgFile   string
-	region    string
-	projectID string
-	// TODO - Look for ways to remove the need to export this outside of package
-	Outputtype string
-	// TODO - Look for ways to remove the need to export this outside of package
-	Logtype string
-
-	rootCmd = &cobra.Command{
-		Use:   "gen",
-		Short: "access generative ai on google cloud",
-		Long:  `gen is a command-line tool for Google Cloud hosted generative ai models - foundation, tuned, and Model Garden models.`,
-	}
-)
-
 // Execute executes the root command.
 func Execute() error {
 	return rootCmd.Execute()

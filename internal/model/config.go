@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -15,48 +16,70 @@ type Config struct {
 }
 
 type ConfigBuilder struct {
-	projectID  *string
-	regionID   *string
-	configFile *string
-	logType    *string
-	outputType *string
+	projectID  string
+	regionID   string
+	configFile string
+	logType    string
+	outputType string
 }
 
-func (b ConfigBuilder) ProjectID(p string) *ConfigBuilder {
-	b.projectID = &p
-	return &b
+func (b *ConfigBuilder) ProjectID(p string) *ConfigBuilder {
+	b.projectID = p
+	return b
 }
 
-func (b ConfigBuilder) RegionID(r string) *ConfigBuilder {
-	b.projectID = &r
-	return &b
+func (b *ConfigBuilder) RegionID(r string) *ConfigBuilder {
+	b.regionID = r
+	return b
 }
-func (b ConfigBuilder) ConfigFile(configFile string) *ConfigBuilder {
-	b.configFile = &configFile
-	return &b
-}
-
-func (b ConfigBuilder) LogType(logType string) *ConfigBuilder {
-	b.logType = &logType
-	return &b
+func (b *ConfigBuilder) ConfigFile(configFile string) *ConfigBuilder {
+	b.configFile = configFile
+	return b
 }
 
-func (b ConfigBuilder) OutputType(outputType string) *ConfigBuilder {
-	b.outputType = &outputType
-	return &b
+func (b *ConfigBuilder) LogType(logType string) *ConfigBuilder {
+	b.logType = logType
+	return b
 }
 
-func (b ConfigBuilder) Build() (Config, error) {
+func (b *ConfigBuilder) OutputType(outputType string) *ConfigBuilder {
+	b.outputType = outputType
+	return b
+}
+
+func (b *ConfigBuilder) Describe() string {
+	return fmt.Sprintf("%+v", b)
+}
+
+func (b *ConfigBuilder) Build() (Config, error) {
 
 	cfg := Config{}
 
-	// TODO - Need to validate configuration
-	cfg.ProjectID = *b.projectID
-	cfg.RegionID = *b.regionID
-	cfg.ConfigFile = *b.configFile
-	cfg.ConfigFile = *b.configFile
-	cfg.LogType = *b.logType
-	cfg.OutputType = *b.outputType
+	if b.projectID == "" {
+		log.Fatalln("Need a valid GCP project ID")
+	} else {
+		cfg.ProjectID = b.projectID
+	}
+
+	if b.regionID == "" {
+		cfg.RegionID = "us-central1"
+	} else {
+		cfg.RegionID = b.regionID
+	}
+
+	if b.configFile == "" {
+		cfg.ConfigFile = b.configFile
+	}
+
+	if b.logType == "" {
+		cfg.LogType = "none"
+	} else {
+		cfg.LogType = b.logType
+	}
+
+	if b.outputType == "" {
+		cfg.OutputType = b.outputType
+	}
 
 	return cfg, nil
 }
