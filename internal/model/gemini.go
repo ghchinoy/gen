@@ -11,15 +11,14 @@ import (
 	"strings"
 
 	"cloud.google.com/go/vertexai/genai"
-	// "github.com/ghchinoy/gen/cmd"
 )
 
 // UseGeminiModel calls Gemini's generate content method
-func UseGeminiModel(ctx context.Context, cfg Config, args []string) error {
+func UseGeminiModel(ctx context.Context, modelName string, cfg Config, args []string) error {
 	log.Printf("Gemini [%s]", modelName)
 	prompt := genai.Text(args[0])
 	var buf bytes.Buffer
-	if err := GenerateContentGemini(ctx, cfg, &buf, modelName, []genai.Part{prompt}); err != nil {
+	if err := GenerateContentGemini(ctx, modelName, cfg, &buf, []genai.Part{prompt}); err != nil {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
@@ -28,17 +27,17 @@ func UseGeminiModel(ctx context.Context, cfg Config, args []string) error {
 }
 
 // GenerateContentGemini calls Gemini's generate content method
-func GenerateContentGemini(ctx context.Context, cfg Config, w io.Writer, projectID string, region string, modelName string, parts []genai.Part) error {
+func GenerateContentGemini(ctx context.Context, modelName string, cfg Config, w io.Writer, parts []genai.Part) error {
 
-	client, err := genai.NewClient(ctx, projectID, region)
+	client, err := genai.NewClient(ctx, cfg.ProjectID, cfg.RegionID)
+
 	if err != nil {
 		return fmt.Errorf("error creating a client: %v", err)
 	}
 	gemini := client.GenerativeModel(modelName)
 
-	// TODO - Look at ways to remove this cross package variable dependency
-	if cmd.ModelConfigFile != "" {
-		modelConfig, err := os.ReadFile(cmd.ModelConfigFile)
+	if cfg.ConfigFile != "" {
+		modelConfig, err := os.ReadFile(cfg.ConfigFile)
 		if err != nil {
 			return fmt.Errorf("error reading model config file: %w", err)
 		}
@@ -48,7 +47,7 @@ func GenerateContentGemini(ctx context.Context, cfg Config, w io.Writer, project
 			return fmt.Errorf("error unmarshalling GenerationConfig from file: %w", err)
 		}
 		gemini.GenerationConfig = config
-		if cmd.Logtype != "none" {
+		if cfg.LogType != "none" {
 			log.Printf("config: %v", config)
 		}
 	}
@@ -64,7 +63,7 @@ func GenerateContentGemini(ctx context.Context, cfg Config, w io.Writer, project
 		}
 		return fmt.Errorf("error generating content: %w", err)
 	}
-	if cmd.Outputtype == "json" {
+	if cfg.OutputType == "json" {
 		rb, _ := json.MarshalIndent(resp, "", "  ")
 		fmt.Fprintln(w, string(rb))
 	} else {

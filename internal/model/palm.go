@@ -60,7 +60,7 @@ type TokenMetadataDetails struct {
 }
 
 // usePaLMModel calls PaLM's generate content method
-func UsePaLMModel(ctx context.Context, cfg Config, args []string) error {
+func UsePaLMModel(ctx context.Context, modelName string, cfg Config, args []string) error {
 	if logtype != "quiet" {
 		log.Printf("PaLM 2 [%s]", modelName)
 	}

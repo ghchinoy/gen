@@ -55,7 +55,7 @@ type AnthropicUsage struct {
 	OutputTokens int `json:"output_tokens,omitempty"`
 }
 
-func UseClaudeModel(ctx context.Context, cfg Config, args []string) error {
+func UseClaudeModel(ctx context.Context, modelName string, cfg Config, args []string) error {
 	if Logtype != "quiet" {
 		log.Printf("Anthropic [%s]", modelName)
 	}
