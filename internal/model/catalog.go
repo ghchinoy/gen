@@ -1,9 +1,10 @@
-package cmd
+package model
+
+import "context"
 
 // A Model sends prompts to a specific GenAI model using an Endpoint location, where the model is enabled and billed
 type Model struct {
-	Prompt func(projectID string, region string, modelName string, args []string) error
-	// endpoint Endpoint
+	Prompt  func(ctx context.Context, cfg Config, args []string) error
 	mFamily string
 	mType   string
 	mName   string
@@ -11,73 +12,73 @@ type Model struct {
 
 var Models map[string]Model = map[string]Model{
 	"gemini-1.0-pro-001": {
-		Prompt:  useGeminiModel,
+		Prompt:  UseGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
 		mName:   "gemini-1.0-pro-001",
 	},
 	"gemini-1.0-ultra-001": {
-		Prompt:  useGeminiModel,
+		Prompt:  UseGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
 		mName:   "gemini-1.0-ultra-001",
 	},
 	"gemini-1.0-pro-vision-001": {
-		Prompt:  useGeminiModel,
+		Prompt:  UseGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
 		mName:   "gemini-1.0-pro-vision-001",
 	},
 	"gemini-1.0-ultra-vision-001": {
-		Prompt:  useGeminiModel,
+		Prompt:  UseGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
 		mName:   "gemini-1.0-ultra-vision-001",
 	},
 	"gemini-1.5-pro-preview-0215": {
-		Prompt:  useGeminiModel,
+		Prompt:  UseGeminiModel,
 		mFamily: "Gemini",
 		mType:   "text",
 		mName:   "gemini-1.5-pro-preview-0215",
 	},
 	"text-bison": {
-		Prompt:  usePaLMModel,
+		Prompt:  UsePaLMModel,
 		mFamily: "text",
 		mType:   "text",
 		mName:   "text-bison",
 	},
 	"text-bison@001": {
-		Prompt:  usePaLMModel,
+		Prompt:  UsePaLMModel,
 		mFamily: "text",
 		mType:   "text",
 		mName:   "text-bison@001",
 	},
 	"text-bison@002": {
-		Prompt:  usePaLMModel,
+		Prompt:  UsePaLMModel,
 		mFamily: "text",
 		mType:   "text",
 		mName:   "text-bison@002",
 	},
 	"text-unicorn@001": {
-		Prompt:  usePaLMModel,
+		Prompt:  UsePaLMModel,
 		mFamily: "text",
 		mType:   "text",
 		mName:   "text-unicorn@001",
 	},
 	"medlm-medium": {
-		Prompt:  usePaLMModel,
+		Prompt:  UsePaLMModel,
 		mFamily: "MultiModal",
 		mType:   "MultiModal",
 		mName:   "medlm-medium",
 	},
 	"medlm-large": {
-		Prompt:  usePaLMModel,
+		Prompt:  UsePaLMModel,
 		mFamily: "MultiModal",
 		mType:   "MultiModal",
 		mName:   "medlm-large",
 	},
 	"medpalm2@preview": {
-		Prompt:  usePaLMModel,
+		Prompt:  UsePaLMModel,
 		mFamily: "MultiModal",
 		mType:   "MultiModal",
 		mName:   "medpalm2@preview",
@@ -123,7 +124,7 @@ var Models map[string]Model = map[string]Model{
 		mName:   "code-gecko@002",
 	},
 	"claude-3-haiku@20240307": {
-		Prompt:  useClaudeModel,
+		Prompt:  UseClaudeModel,
 		mFamily: "MultiModal",
 		mType:   "MultiModal",
 		mName:   "claude-3-haiku@20240307",

@@ -1,19 +1,23 @@
 package cmd
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/ghchinoy/gen/internal/model"
 	"github.com/spf13/cobra"
 	// "google.golang.org/protobuf/encoding/protojson"
 	// "google.golang.org/protobuf/types/known/structpb"
+	// TODO - Use this import after moving model files to internal/model directory and 'model' package
+	// "github.com/ghchinoy/gen/internal/model"
 )
 
 var (
+	// TODO - Look at ways to remove the need to export these two variable outside the package
 	modelName       string
-	modelConfigFile string
+	ModelConfigFile string
 	//modelConfig     map[string]interface{}
 )
 
@@ -23,7 +27,7 @@ func init() {
 	//promptCmd.AddCommand(generateContentCmd)
 
 	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro", "model name")
-	promptCmd.PersistentFlags().StringVarP(&modelConfigFile, "config", "c", "", "model parameters")
+	promptCmd.PersistentFlags().StringVarP(&ModelConfigFile, "config", "c", "", "model parameters")
 
 	//flag.StringVar(&modelName, "model", "gemini-1.0-pro", "generative model to use")
 	//flag.StringVar(&region, "region", "us-central1", "region to use")
@@ -85,7 +89,16 @@ func generateContent(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	if logtype != "none" {
+	cfgB := model.ConfigBuilder{}
+
+	// Set the model configuration
+	cfgB.ProjectID(projectID).RegionID(region).ConfigFile(cfgFile).OutputType(Outputtype).LogType(Logtype)
+	cfg, err := cfgB.Build()
+	if err != nil {
+		log.Fatalf("error building config: %v", err)
+	}
+
+	if Logtype != "none" {
 		log.Printf("model: %s", modelName)
 		log.Printf("prompt: %s", args)
 	}
@@ -93,14 +106,16 @@ func generateContent(cmd *cobra.Command, args []string) {
 	fmt.Printf("/n Model name: %s", modelName)
 
 	// Lookup the model based on the name
-	m, ok := Models[modelName]
+	m, ok := model.Models[modelName]
 	if !ok {
 		log.Printf("model '%s' is not supported", modelName)
 		// TODO replace with log.fatal
 		os.Exit(1)
 	}
 
-	err := m.Prompt(projectID, region, m.mName, args)
+	ctx := context.Background()
+
+	err = m.Prompt(ctx, cfg, args)
 	if err != nil {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
@@ -108,21 +123,21 @@ func generateContent(cmd *cobra.Command, args []string) {
 
 }
 
-// readModelConfigFile reads the model configuration file (JSON text file)
-func readModelConfigFile(configFile string) (map[string]interface{}, error) {
+// // readModelConfigFile reads the model configuration file (JSON text file)
+// func readModelConfigFile(configFile string) (map[string]interface{}, error) {
 
-	// Resolve unused argument
-	_ = configFile
-	var config map[string]interface{}
-	data, err := os.ReadFile(modelConfigFile)
-	if err != nil {
-		return config, fmt.Errorf("error reading model config: %v", err)
+// 	// Resolve unused argument
+// 	_ = configFile
+// 	var config map[string]interface{}
+// 	data, err := os.ReadFile(ModelConfigFile)
+// 	if err != nil {
+// 		return config, fmt.Errorf("error reading model config: %v", err)
 
-	}
+// 	}
 
-	err = json.Unmarshal(data, &config)
-	if err != nil {
-		return config, fmt.Errorf("error unmarshalling model config: %v", err)
-	}
-	return config, nil
-}
+// 	err = json.Unmarshal(data, &config)
+// 	if err != nil {
+// 		return config, fmt.Errorf("error unmarshalling model config: %v", err)
+// 	}
+// 	return config, nil
+// }

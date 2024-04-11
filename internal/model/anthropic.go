@@ -1,4 +1,4 @@
-package cmd
+package model
 
 import (
 	"bytes"
@@ -55,8 +55,8 @@ type AnthropicUsage struct {
 	OutputTokens int `json:"output_tokens,omitempty"`
 }
 
-func useClaudeModel(projectID string, region string, modelName string, args []string) error {
-	if logtype != "quiet" {
+func UseClaudeModel(ctx context.Context, cfg Config, args []string) error {
+	if Logtype != "quiet" {
 		log.Printf("Anthropic [%s]", modelName)
 	}
 	prompt := args[0]
@@ -96,7 +96,7 @@ func generateContentClaude(w io.Writer, prompt, projectID, location, publisher, 
 	// Endpoint
 	base := fmt.Sprintf("projects/%s/locations/%s/publishers/%s/models", projectID, location, publisher)
 	url := fmt.Sprintf("%s/%s", base, model)
-	if logtype != "none" {
+	if Logtype != "none" {
 		log.Printf("url: %s", url)
 	}
 
@@ -138,7 +138,7 @@ func generateContentClaude(w io.Writer, prompt, projectID, location, publisher, 
 		return err
 	}
 
-	if outputtype == "json" {
+	if Outputtype == "json" {
 		fmt.Fprintln(w, string(resp.Data))
 	} else {
 		var r AnthropicResponse

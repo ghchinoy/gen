@@ -27,6 +27,7 @@ var modelsCmd = &cobra.Command{
 	Hidden:  true,
 }
 
+// TODO - Need to refactor this to use the models package
 func listModels(cmd *cobra.Command, args []string) {
 	// read modellist string via CSV reader
 	r := csv.NewReader(strings.NewReader(modellist))

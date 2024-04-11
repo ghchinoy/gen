@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"cloud.google.com/go/vertexai/genai"
+	"github.com/ghchinoy/gen/internal/model"
 	"github.com/spf13/cobra"
 )
 
@@ -53,7 +54,7 @@ func interactiveMode(cmd *cobra.Command, args []string) {
 
 		// gemini
 		prompt := genai.Text(input.Text())
-		if err := generateContentGemini(&buf, projectID, region, modelName, []genai.Part{prompt}); err != nil {
+		if err := model.GenerateContentGemini(&buf, projectID, region, modelName, []genai.Part{prompt}); err != nil {
 			log.Printf("error generating content: %v", err)
 			os.Exit(1)
 		}
