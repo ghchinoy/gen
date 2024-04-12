@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"fmt"
+	"sort"
 )
 
 // A Model sends prompts to a specific GenAI model using an Endpoint location, where the model is enabled and billed
@@ -11,6 +12,20 @@ type Model struct {
 	MFamily string
 	MType   string
 	MName   string
+}
+
+func List() []string {
+
+	models := make([]string, 0, len(Models))
+	for k := range Models {
+		mdl := fmt.Sprintf("Family: %-15s\t Type: %-15s\t Name: %-20s", Models[k].MFamily, Models[k].MType, Models[k].MName)
+		models = append(models, mdl)
+	}
+
+	sort.Strings(models)
+
+	return models
+
 }
 
 var Models map[string]Model = map[string]Model{
