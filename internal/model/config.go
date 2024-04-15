@@ -28,6 +28,7 @@ func (b *ConfigBuilder) ProjectID(p string) *ConfigBuilder {
 	return b
 }
 
+// TODO - Need to document allowed values and validate input
 func (b *ConfigBuilder) RegionID(r string) *ConfigBuilder {
 	b.regionID = r
 	return b
@@ -37,11 +38,13 @@ func (b *ConfigBuilder) ConfigFile(configFile string) *ConfigBuilder {
 	return b
 }
 
+// TODO - Need to document allowed values and validate input
 func (b *ConfigBuilder) LogType(logType string) *ConfigBuilder {
 	b.logType = logType
 	return b
 }
 
+// TODO - Need to document allowed values and validate input
 func (b *ConfigBuilder) OutputType(outputType string) *ConfigBuilder {
 	b.outputType = outputType
 	return b

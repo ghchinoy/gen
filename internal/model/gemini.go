@@ -28,6 +28,11 @@ func UseGeminiModel(ctx context.Context, modelName string, cfg Config, args []st
 
 // GenerateContentGemini calls Gemini's generate content method
 func GenerateContentGemini(ctx context.Context, modelName string, cfg Config, w io.Writer, parts []genai.Part) error {
+	// TODO - There are differences between this function and the matching function in palm.go
+	// due to when the config file contents are read.
+
+	// TODO - Unlike matching functions in palm.go and anthropic.go, this one is public.  Should the
+	// others be made public or should this one be made private.
 
 	client, err := genai.NewClient(ctx, cfg.ProjectID, cfg.RegionID)
 

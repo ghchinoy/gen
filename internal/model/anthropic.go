@@ -50,12 +50,17 @@ type AnthropicResponse struct {
 	Usage        AnthropicUsage     `json:"usage,omitempty"`
 }
 
+// TODO - Add documentation for type
 type AnthropicUsage struct {
 	InputTokens  int `json:"input_tokens,omitempty"`
 	OutputTokens int `json:"output_tokens,omitempty"`
 }
 
+// TODO - Add documentation for function
 func UseClaudeModel(ctx context.Context, modelName string, cfg Config, args []string) error {
+	// TODO - There are differences between this function and the matching function in palm.go, and gemini.go
+	// due to when the config file contents are read.
+
 	if cfg.LogType != "quiet" {
 		log.Printf("Anthropic [%s]", modelName)
 	}

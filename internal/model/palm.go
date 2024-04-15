@@ -59,7 +59,7 @@ type TokenMetadataDetails struct {
 	TotalTokens             int `json:"totalTokens,omitempty"`
 }
 
-// usePaLMModel calls PaLM's generate content method
+// UsePaLMModel calls PaLM's generate content method
 func UsePaLMModel(ctx context.Context, modelName string, cfg Config, args []string) error {
 	if cfg.LogType != "quiet" {
 		log.Printf("PaLM 2 [%s]", modelName)
@@ -98,6 +98,8 @@ func UsePaLMModel(ctx context.Context, modelName string, cfg Config, args []stri
 
 // generateContentPaLM generates text from prompt and configurations provided.
 func generateContentPaLM(ctx context.Context, modelName string, cfg Config, w io.Writer, prompt string, parameters map[string]interface{}) error {
+	// TODO - There are differences between this function and the matching function in palm.go
+	// due to when the config file contents are read.
 
 	apiEndpoint := fmt.Sprintf("%s-aiplatform.googleapis.com:443", cfg.RegionID)
 
