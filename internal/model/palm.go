@@ -75,6 +75,7 @@ func UsePaLMModel(ctx context.Context, modelName string, cfg Config, args []stri
 			return err
 		}
 	} else { // default PaLM 2 model params
+		// TODO These are part of models and should likely be refactored to that package
 		parameters = map[string]interface{}{
 			"temperature":     0.6,
 			"maxOutputTokens": 256,
