@@ -2,8 +2,11 @@ package cmd
 
 import (
 	_ "embed"
+	"encoding/json"
 	"fmt"
+	"os"
 
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
 	"github.com/ghchinoy/gen/internal/model"
@@ -23,12 +26,33 @@ var modelsCmd = &cobra.Command{
 }
 
 func listModels(cmd *cobra.Command, args []string) {
-
-	mdls := model.List()
-
-	for _, v := range mdls {
-
-		fmt.Println(v)
+	models, err := model.List()
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 
+	if Outputtype == "json" {
+		jsonBytes, err := json.Marshal(models)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(string(jsonBytes))
+	} else {
+		data := [][]string{}
+		for _, v := range models {
+			data = append(data, []string{
+				v.Family,
+				v.Mode,
+				v.Name,
+			})
+		}
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader([]string{"Family", "Mode", "Model ID"})
+		table.SetBorder(false)
+		table.SetAlignment(tablewriter.ALIGN_LEFT)
+		table.AppendBulk(data)
+		table.Render()
+	}
 }
