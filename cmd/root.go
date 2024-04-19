@@ -10,21 +10,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	// Used for flags.
-	cfgFile    string
-	region     string
-	projectID  string
-	outputtype string
-	logtype    string
-
-	rootCmd = &cobra.Command{
-		Use:   "gen",
-		Short: "access generative ai on google cloud",
-		Long:  `gen is a command-line tool for Google Cloud hosted generative ai models - foundation, tuned, and Model Garden models.`,
-	}
-)
-
 // Execute executes the root command.
 func Execute() error {
 	return rootCmd.Execute()
@@ -38,9 +23,9 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&projectID, "project", "", "Google Cloud Project ID")
 	//rootCmd.MarkPersistentFlagRequired("project")
 	rootCmd.PersistentFlags().StringVar(&region, "region", "", "region for generative AI endpoint")
-	rootCmd.PersistentFlags().StringVar(&outputtype, "output", "text", "output type")
+	rootCmd.PersistentFlags().StringVar(&Outputtype, "output", "text", "output type")
 
-	rootCmd.PersistentFlags().StringVar(&logtype, "log", "none", "logging output")
+	rootCmd.PersistentFlags().StringVar(&Logtype, "log", "none", "logging output")
 
 }
 

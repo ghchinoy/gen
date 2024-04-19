@@ -3,17 +3,15 @@ package cmd
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
 	"cloud.google.com/go/vertexai/genai"
+	"github.com/ghchinoy/gen/internal/model"
 	"github.com/spf13/cobra"
-)
-
-var (
-// modelName string // for reference, defined in prompt
 )
 
 func init() {
@@ -35,10 +33,28 @@ func interactiveMode(cmd *cobra.Command, args []string) {
 	log.Print("type 'exit' or 'quit' to exit")
 	log.Printf("model: %s", modelName)
 
-	if !strings.Contains(modelName, "gemini") {
+	// Lookup the model based on the name
+	m, ok := model.Models[modelName]
+	if !ok {
+		log.Printf("model '%s' is not supported", modelName)
+		// TODO replace with log.fatal
+		os.Exit(1)
+	}
+
+	if m.MFamily != "gemini" {
 		log.Print("Apologies, only gemini models at this time")
 		os.Exit(0)
 	}
+
+	cfgB := model.ConfigBuilder{}
+
+	// Set the model configuration
+	cfgB.ProjectID(projectID).RegionID(region).ConfigFile(cfgFile).OutputType(Outputtype).LogType(Logtype)
+	cfg, err := cfgB.Build()
+	if err != nil {
+		log.Fatalf("error building config: %v", err)
+	}
+
 	for {
 		fmt.Print("? ")
 		input := bufio.NewScanner(os.Stdin)
@@ -51,9 +67,11 @@ func interactiveMode(cmd *cobra.Command, args []string) {
 			os.Exit(0)
 		}
 
+		ctx := context.Background()
+
 		// gemini
 		prompt := genai.Text(input.Text())
-		if err := generateContentGemini(&buf, projectID, region, modelName, []genai.Part{prompt}); err != nil {
+		if err := model.GenerateContentGemini(ctx, m.MName, cfg, &buf, []genai.Part{prompt}); err != nil {
 			log.Printf("error generating content: %v", err)
 			os.Exit(1)
 		}
