@@ -34,14 +34,20 @@ func interactiveMode(cmd *cobra.Command, args []string) {
 	log.Printf("model: %s", modelName)
 
 	// Lookup the model based on the name
-	m, ok := model.Models[modelName]
-	if !ok {
-		log.Printf("model '%s' is not supported", modelName)
-		// TODO replace with log.fatal
-		os.Exit(1)
+	/*
+		m, ok := model.Models[modelName]
+		if !ok {
+			log.Printf("model '%s' is not supported", modelName)
+			// TODO replace with log.fatal
+			os.Exit(1)
+		}
+	*/
+	m, err := model.Get(modelName)
+	if err != nil {
+		log.Fatalf("model '%s' is not supported\n", modelName)
 	}
 
-	if m.MFamily != "gemini" {
+	if m.Family != "gemini" {
 		log.Print("Apologies, only gemini models at this time")
 		os.Exit(0)
 	}
@@ -71,7 +77,7 @@ func interactiveMode(cmd *cobra.Command, args []string) {
 
 		// gemini
 		prompt := genai.Text(input.Text())
-		if err := model.GenerateContentGemini(ctx, m.MName, cfg, &buf, []genai.Part{prompt}); err != nil {
+		if err := model.GenerateContentGemini(ctx, m.Name, cfg, &buf, []genai.Part{prompt}); err != nil {
 			log.Printf("error generating content: %v", err)
 			os.Exit(1)
 		}

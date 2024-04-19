@@ -13,14 +13,8 @@ import (
 func init() {
 	rootCmd.AddCommand(promptCmd)
 
-	//promptCmd.AddCommand(generateContentCmd)
-
 	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro", "model name")
 	promptCmd.PersistentFlags().StringVarP(&modelConfigFile, "config", "c", "", "model parameters")
-
-	//flag.StringVar(&modelName, "model", "gemini-1.0-pro", "generative model to use")
-	//flag.StringVar(&region, "region", "us-central1", "region to use")
-	//flag.Parse()
 }
 
 var promptCmd = &cobra.Command{
@@ -63,8 +57,14 @@ func generateContent(cmd *cobra.Command, args []string) {
 	fmt.Printf("\nModel name: %s\n", modelName)
 
 	// Lookup the model based on the name
-	m, ok := model.Models[modelName]
-	if !ok {
+	/*
+		m, ok := model.Models[modelName]
+		if !ok {
+			log.Fatalf("model '%s' is not supported\n", modelName)
+		}
+	*/
+	m, err := model.Get(modelName)
+	if err != nil {
 		log.Fatalf("model '%s' is not supported\n", modelName)
 	}
 
