@@ -38,7 +38,7 @@ func initConfig() {
 		home, err := homedir.Dir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name "cxctl" (without extension).
+		// Search config in home directory with name "gen" (without extension).
 		viper.SetConfigName("gen") // name of config file (without extension)
 		viper.AddConfigPath(os.Getenv("HOME") + "/.config/gen")
 		viper.AddConfigPath(home)
