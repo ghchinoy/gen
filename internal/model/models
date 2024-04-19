@@ -7,7 +7,7 @@ gemini,multimodal,gemini-1.5-pro-preview-0409
 palm2,text,text-bison
 palm2,text,text-bison@001
 palm2,text,text-bison@002
-#palm2,text,text-bison-32k
+palm2,text,text-bison-32k
 #palm2,text,text-bison-32k@002
 palm2,text,text-unicorn@001
 palm2,text,medlm-large

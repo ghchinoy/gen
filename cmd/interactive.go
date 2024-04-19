@@ -34,14 +34,6 @@ func interactiveMode(cmd *cobra.Command, args []string) {
 	log.Printf("model: %s", modelName)
 
 	// Lookup the model based on the name
-	/*
-		m, ok := model.Models[modelName]
-		if !ok {
-			log.Printf("model '%s' is not supported", modelName)
-			// TODO replace with log.fatal
-			os.Exit(1)
-		}
-	*/
 	m, err := model.Get(modelName)
 	if err != nil {
 		log.Fatalf("model '%s' is not supported\n", modelName)

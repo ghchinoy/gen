@@ -28,14 +28,11 @@ var promptCmd = &cobra.Command{
 
 // generateContent prompts a model to generate content based on the provided prompt.
 func generateContent(cmd *cobra.Command, args []string) {
-
 	if len(args) == 0 {
-
 		fmt.Println("please provide prompt")
 		log.Fatal("please provide prompt")
 	}
-
-	fmt.Printf("ProjectID: %s, Region: %s\n", projectID, region)
+	//log.Printf("ProjectID: %s, Region: %s\n", projectID, region)
 
 	cfgB := model.ConfigBuilder{}
 
@@ -43,7 +40,7 @@ func generateContent(cmd *cobra.Command, args []string) {
 	cfgB.ProjectID(projectID).RegionID(region).ConfigFile(cfgFile).OutputType(Outputtype).LogType(Logtype)
 	// fmt.Printf("Model config: %s\n", cfgB.Describe())
 	cfg, err := cfgB.Build()
-	fmt.Printf("Model Config: %+v", cfg)
+	log.Printf("Model Config: %+v", cfg)
 
 	if err != nil {
 		log.Fatalf("error building config: %v", err)
@@ -54,15 +51,9 @@ func generateContent(cmd *cobra.Command, args []string) {
 		log.Printf("prompt: %s", args)
 	}
 
-	fmt.Printf("\nModel name: %s\n", modelName)
+	//fmt.Printf("\nModel name: %s\n", modelName)
 
 	// Lookup the model based on the name
-	/*
-		m, ok := model.Models[modelName]
-		if !ok {
-			log.Fatalf("model '%s' is not supported\n", modelName)
-		}
-	*/
 	m, err := model.Get(modelName)
 	if err != nil {
 		log.Fatalf("model '%s' is not supported\n", modelName)
