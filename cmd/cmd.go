@@ -20,6 +20,6 @@ var (
 	rootCmd = &cobra.Command{
 		Use:   "gen",
 		Short: "access generative ai on google cloud",
-		Long:  `gen is a command-line tool for Google Cloud hosted generative ai models - foundation, tuned, and Model Garden models.`,
+		Long:  `gen is a command-line tool for interacting with Google Cloud hosted generative ai models - foundation, tuned, and Model Garden models.`,
 	}
 )
