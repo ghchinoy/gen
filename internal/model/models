@@ -1,5 +1,6 @@
 #family,mode,model
 gemini,text,gemini-1.0-pro-001
+gemini,text,gemini-1.0-pro-002
 gemini,text,gemini-1.0-ultra-001
 gemini,multimodal,gemini-1.0-pro-vision-001
 gemini,multimodal,gemini-1.0-ultra-vision-001

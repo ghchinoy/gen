@@ -17,7 +17,7 @@ var promptFile string
 func init() {
 	rootCmd.AddCommand(tokensCmd)
 
-	tokensCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro", "model name")
+	tokensCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro-001", "model name")
 	tokensCmd.PersistentFlags().StringVarP(&promptFile, "file", "f", "", "prompt file")
 }
 
