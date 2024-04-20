@@ -21,12 +21,11 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/gen/gen.yaml)")
 	rootCmd.PersistentFlags().StringVar(&projectID, "project", "", "Google Cloud Project ID")
-	//rootCmd.MarkPersistentFlagRequired("project")
+	rootCmd.MarkPersistentFlagRequired("project")
 	rootCmd.PersistentFlags().StringVar(&region, "region", "", "region for generative AI endpoint")
+	rootCmd.MarkPersistentFlagRequired("region")
 	rootCmd.PersistentFlags().StringVar(&Outputtype, "output", "text", "output type")
-
 	rootCmd.PersistentFlags().StringVar(&Logtype, "log", "none", "logging output")
-
 }
 
 func initConfig() {
@@ -43,17 +42,23 @@ func initConfig() {
 		viper.AddConfigPath(os.Getenv("HOME") + "/.config/gen")
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName("gen")
 	}
 
-	//viper.SetEnvPrefix("GEN")
+	// bind environment variables
+	//viper.SetEnvPrefix("GEN") // env variables prefix
 	viper.AutomaticEnv()
 
 	if viper.IsSet("PROJECT_ID") {
-		rootCmd.Flags().Set("project", fmt.Sprintf("%v", viper.Get("PROJECT_ID")))
+		project_flag, _ := rootCmd.Flags().GetString("project")
+		if project_flag == "" {
+			rootCmd.Flags().Set("project", fmt.Sprintf("%v", viper.Get("PROJECT_ID")))
+		}
 	}
 	if viper.IsSet("REGION") {
-		rootCmd.Flags().Set("region", fmt.Sprintf("%v", viper.Get("REGION")))
+		region_flag, _ := rootCmd.Flags().GetString("region")
+		if region_flag == "" {
+			rootCmd.Flags().Set("region", fmt.Sprintf("%v", viper.Get("REGION")))
+		}
 	}
 
 	// check if there are prefixed env vars and bind them
@@ -65,6 +70,7 @@ func initConfig() {
 		}
 	})
 
+	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
