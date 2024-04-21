@@ -10,6 +10,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	systemInstructions string
+)
+
 func init() {
 	rootCmd.AddCommand(promptCmd)
 
@@ -50,8 +54,6 @@ func generateContent(cmd *cobra.Command, args []string) {
 		log.Printf("model: %s", modelName)
 		log.Printf("prompt: %s", args)
 	}
-
-	//fmt.Printf("\nModel name: %s\n", modelName)
 
 	// Lookup the model based on the name
 	m, err := model.Get(modelName)
