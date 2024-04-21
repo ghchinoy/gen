@@ -1,6 +1,6 @@
 module github.com/ghchinoy/gen
 
-go 1.22.1
+go 1.22.2
 
 require (
 	cloud.google.com/go/aiplatform v1.67.0
@@ -10,7 +10,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.18.2
-	google.golang.org/api v0.174.0
+	google.golang.org/api v0.175.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240415180920-8c6c420018be
 	google.golang.org/protobuf v1.33.0
 )
