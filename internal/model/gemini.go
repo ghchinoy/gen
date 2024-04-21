@@ -7,7 +7,12 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"mime"
+	"net/http"
+	"net/url"
 	"os"
+	"path/filepath"
+	"regexp"
 	"strings"
 
 	"cloud.google.com/go/vertexai/genai"
@@ -16,9 +21,35 @@ import (
 // UseGeminiModel calls Gemini's generate content method
 func UseGeminiModel(ctx context.Context, modelName string, cfg Config, args []string) error {
 	log.Printf("Gemini [%s]", modelName)
-	prompt := genai.Text(args[0])
+
+	var promptParts []genai.Part
+	for _, arg := range args {
+		if argLooksLikeGCSURL(arg) {
+			part := genai.FileData{
+				MIMEType: mime.TypeByExtension(filepath.Ext(arg)),
+				FileURI:  arg,
+			}
+			promptParts = append(promptParts, part)
+		} else if argLooksLikeURL(arg) {
+			part, err := getPartFromURL(arg)
+			if err != nil {
+				return err
+			}
+			promptParts = append(promptParts, part)
+		} else if argLooksLikeFilename(arg) {
+			part, err := getPartFromFile(arg)
+			if err != nil {
+				return err
+			}
+			promptParts = append(promptParts, part)
+		} else {
+
+			promptParts = append(promptParts, genai.Text(arg))
+		}
+	}
+
 	var buf bytes.Buffer
-	if err := GenerateContentGemini(ctx, modelName, cfg, &buf, []genai.Part{prompt}); err != nil {
+	if err := GenerateContentGemini(ctx, modelName, cfg, &buf, promptParts); err != nil {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
@@ -35,10 +66,11 @@ func GenerateContentGemini(ctx context.Context, modelName string, cfg Config, w 
 	// others be made public or should this one be made private.
 
 	client, err := genai.NewClient(ctx, cfg.ProjectID, cfg.RegionID)
-
 	if err != nil {
 		return fmt.Errorf("error creating a client: %v", err)
 	}
+	defer client.Close()
+
 	gemini := client.GenerativeModel(modelName)
 
 	if cfg.ConfigFile != "" {
@@ -68,6 +100,7 @@ func GenerateContentGemini(ctx context.Context, modelName string, cfg Config, w 
 		}
 		return fmt.Errorf("error generating content: %w", err)
 	}
+
 	if cfg.OutputType == "json" {
 		rb, _ := json.MarshalIndent(resp, "", "  ")
 		fmt.Fprintln(w, string(rb))
@@ -83,4 +116,61 @@ func GenerateContentGemini(ctx context.Context, modelName string, cfg Config, w 
 		}
 	}
 	return nil
+}
+
+// thanks to eilben's https://github.com/eliben/gemini-cli/blob/main/internal/commands/prompt.go
+
+// argLooksLikeFilename says if command-line argument looks like a filename,
+// which we consider to have an alphabetical extension following a dot separator,
+// but not look like a URL.
+func argLooksLikeFilename(arg string) bool {
+	re := regexp.MustCompile(`\.[a-zA-Z]+$`)
+	return re.MatchString(arg) && strings.Index(arg, "://") < 0
+}
+
+func argLooksLikeGCSURL(arg string) bool {
+	return strings.HasPrefix(arg, "gs://")
+}
+
+func argLooksLikeURL(arg string) bool {
+	_, err := url.ParseRequestURI(arg)
+	return err == nil
+}
+
+func getPartFromFile(path string) (genai.Part, error) {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	ext := filepath.Ext(path)
+	switch strings.TrimSpace(ext) {
+	case ".jpg", ".jpeg":
+		return genai.ImageData("jpeg", b), nil
+	case ".png":
+		return genai.ImageData("png", b), nil
+	default:
+		return nil, fmt.Errorf("invalid image file extension: %s", ext)
+	}
+}
+
+func getPartFromURL(url string) (genai.Part, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch image from url: %w", err)
+	}
+	defer resp.Body.Close()
+
+	urlData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read image bytes: %w", err)
+	}
+
+	mimeType := resp.Header.Get("Content-Type")
+	parts := strings.Split(mimeType, "/")
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("invalid mime type %v", mimeType)
+	}
+
+	return genai.ImageData(parts[1], urlData), nil
 }

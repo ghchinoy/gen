@@ -3,6 +3,7 @@ gemini,text,gemini-1.0-pro
 gemini,text,gemini-1.0-pro-001
 gemini,text,gemini-1.0-pro-001
 gemini,text,gemini-1.0-ultra-001
+gemini,multimodal,gemini-1.0-pro-vision
 gemini,multimodal,gemini-1.0-pro-vision-001
 gemini,multimodal,gemini-1.0-ultra-vision-001
 gemini,multimodal,gemini-1.5-pro-preview-0409
