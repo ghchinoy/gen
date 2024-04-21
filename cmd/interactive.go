@@ -17,7 +17,7 @@ import (
 func init() {
 	rootCmd.AddCommand(interactiveCmd)
 
-	interactiveCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro-001", "model name")
+	interactiveCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro", "model name")
 }
 
 var interactiveCmd = &cobra.Command{

@@ -13,7 +13,7 @@ import (
 func init() {
 	rootCmd.AddCommand(promptCmd)
 
-	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro-001", "model name")
+	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.0-pro", "model name")
 	promptCmd.PersistentFlags().StringVarP(&modelConfigFile, "config", "c", "", "model parameters")
 }
 
