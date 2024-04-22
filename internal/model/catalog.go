@@ -2,14 +2,15 @@ package model
 
 import (
 	"context"
+	"embed"
 	_ "embed"
 	"encoding/csv"
 	"fmt"
 	"strings"
 )
 
-//go:embed models
-var modellist string
+//go:embed models*
+var modelfiles embed.FS
 
 // A Model sends prompts to a specific GenAI model using an Endpoint location, where the model is enabled and billed
 type Model struct {
@@ -21,10 +22,16 @@ type Model struct {
 
 // listToModels returns a slice of Models from the embedded CSV file of models
 func listToModels() ([]Model, error) {
-	r := csv.NewReader(strings.NewReader(modellist))
-	records, err := r.ReadAll()
-	if err != nil {
-		return nil, err
+	var records [][]string
+	for _, modelfile := range []string{"models", "models.internal"} {
+		var modelrecords [][]string
+		modellist, err := modelfiles.ReadFile(modelfile)
+		if err != nil {
+			continue
+		}
+		r := csv.NewReader(strings.NewReader(string(modellist)))
+		modelrecords, _ = r.ReadAll()
+		records = append(records, modelrecords...)
 	}
 
 	models := make([]Model, 0, len(records))

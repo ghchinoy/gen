@@ -1,5 +1,7 @@
 # Go workspace file
 go.work
 
+internal/model/models.internal
+
 samples/
 dist/
