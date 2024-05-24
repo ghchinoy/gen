@@ -3,7 +3,6 @@ package model
 import (
 	"context"
 	"embed"
-	_ "embed"
 	"encoding/csv"
 	"fmt"
 	"strings"
@@ -75,7 +74,7 @@ func Get(name string) (Model, error) {
 	return Model{}, fmt.Errorf("Model: `%s` not found", name)
 }
 
-// TODO - Ideally would like to avoid this level of indirection, but suing it for the
+// TODO - Ideally would like to avoid this level of indirection, but using it for the
 //
 //	time being to get course grained refactoring working
 func (m Model) Use(ctx context.Context, cfg Config, args []string) error {

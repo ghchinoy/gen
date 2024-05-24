@@ -30,6 +30,7 @@ func UseGeminiModel(ctx context.Context, modelName string, cfg Config, args []st
 				FileURI:  arg,
 			}
 			promptParts = append(promptParts, part)
+
 		} else if argLooksLikeURL(arg) {
 			part, err := getPartFromURL(arg)
 			if err != nil {
