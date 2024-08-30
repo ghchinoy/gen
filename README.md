@@ -2,6 +2,9 @@
 
 `gen` is a command-line tool that interacts with Google Cloud models - foundation models Gemini, PaLM, and models found on Model Garden such as Claude and others.
 
+
+![](./media/gen-002.gif)
+
 ## Usage
 
 ```bash
