@@ -31,3 +31,5 @@ palm2,embeddings,code-gecko@002
 anthropic,multimodal,claude-3-haiku@20240307
 anthropic,multimodal,claude-3-sonnet@20240229
 anthropic,multimodal,claude-3-opus@20240229
+anthropic,multimodal,claude-3-5-sonnet@20240620
+meta,text,llama3-405b-instruct-maas
