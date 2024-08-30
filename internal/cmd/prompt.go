@@ -19,6 +19,7 @@ func init() {
 
 	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.5-flash", "model name")
 	promptCmd.PersistentFlags().StringVarP(&modelConfigFile, "config", "c", "", "model parameters")
+	promptCmd.PersistentFlags().StringVarP(&promptFile, "file", "f", "", "prompt from file")
 }
 
 var promptCmd = &cobra.Command{
@@ -32,10 +33,22 @@ var promptCmd = &cobra.Command{
 
 // generateContent prompts a model to generate content based on the provided prompt.
 func generateContent(cmd *cobra.Command, args []string) {
-	if len(args) == 0 {
-		fmt.Println("please provide prompt")
-		log.Fatal("please provide prompt")
+
+	var prompt []string
+	if promptFile != "" {
+		promptBytes, err := os.ReadFile(promptFile)
+		if err != nil {
+			log.Fatalf("unable to read file %s", promptFile)
+		}
+		prompt = append(prompt, string(promptBytes))
+	} else {
+		if len(args) == 0 {
+			fmt.Println("please provide prompt")
+			log.Fatal("please provide prompt")
+		}
+		prompt = args
 	}
+
 	//log.Printf("ProjectID: %s, Region: %s\n", projectID, region)
 
 	cfgB := model.ConfigBuilder{}
@@ -52,7 +65,7 @@ func generateContent(cmd *cobra.Command, args []string) {
 
 	if Logtype != "none" {
 		log.Printf("model: %s", modelName)
-		log.Printf("prompt: %s", args)
+		log.Printf("prompt: %s", prompt)
 	}
 
 	// Lookup the model based on the name
@@ -63,7 +76,7 @@ func generateContent(cmd *cobra.Command, args []string) {
 
 	ctx := context.Background()
 
-	err = m.Use(ctx, cfg, args)
+	err = m.Use(ctx, cfg, prompt)
 	if err != nil {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
