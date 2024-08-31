@@ -5,11 +5,11 @@
 # No need to change anything below ####
 #
 
-VERSION=$(<cmd/version)
+VERSION=$(<internal/cmd/version)
 
 TOOLNAME=gen
 OSLIST=(linux darwin windows)
-ARCHLIST=(amd64 386)
+ARCHLIST=(amd64 x86_64 386)
 
 ####
 

@@ -1,6 +1,8 @@
 # Go workspace file
 go.work
 
+.DS_Store
+
 internal/model/models.internal
 
 samples/

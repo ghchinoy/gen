@@ -11,6 +11,9 @@ gemini,multimodal,gemini-1.5-pro-001
 gemini,multimodal,gemini-1.5-flash
 gemini,multimodal,gemini-1.5-flash-001
 gemini,multimodal,gemini-experimental
+gemini,multimodal,gemini-flash-experimental
+gemini,multimodal,gemini-pro-experimental
+gemini,multimodal,gemini-1.0-pro-preview-open-book-qa
 palm2,text,text-bison
 palm2,text,text-bison@001
 palm2,text,text-bison@002

@@ -25,6 +25,10 @@ Install `gen` on your machine via:
 go install github.com/ghchinoy/gen@latest
 ```
 
+Check `gen version` once installed to make sure you have the latest release.
+
+If you want to install the main branch, use `go install github.com/ghchinoy/gen@main`.
+
 
 #### Authentication
 
@@ -54,6 +58,7 @@ Using flags
 gen --project $(gcloud config get project) --region us-central1 p "hi there"
 ```
 
+## Usage
 
 ### Generate content
 
@@ -87,14 +92,20 @@ gen p --model text-bison@002 "say something nice to me"
 
 Note: This uses the `p` alias for the `prompt` command, see `gen help prompt` for aliases for a specific command.
 
-If you have Anthropic's Claude activated from Model Garden, you can also use it this way:
+If you have [Anthropic's models activated from Model Garden](https://console.cloud.google.com/vertex-ai/model-garden?pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22providers%22%5D,%22o%22:%5B%22ANTHROPIC%22%5D),%22s%22:%22%22))), you can also use the model name in the `--model` (or `-m`) flag, the example below is for [Claude 3 Haiku](https://console.cloud.google.com/vertex-ai/publishers/anthropic/model-garden/claude-3-haiku):
 
 ```bash
 gen p -m claude-3-haiku@20240307 "say something nice to me"
 ```
 
+[Claude 3.5 Sonnet](https://console.cloud.google.com/vertex-ai/publishers/anthropic/model-garden/claude-3-5-sonnet):
 
-#### Model Configuration Parameters
+```bash
+gen p -m claude-3-5-sonnet@20240620 "say something nice to me"
+```
+
+
+### Model Configuration Parameters
 
 Use the `--config` flag to pass in model parameters, as a json file, such as:
 
@@ -159,6 +170,27 @@ I am Gemini, a multi-modal AI language model developed by Google. I don't have a
 
 ```
 
+### Compare outputs with diff
+
+Using the unix `diff` command and a clever ordering of `gen`, you can compare the output of two models with the same prompt.
+
+```
+export MY_PROMPT="say something nice to me and mention your name"
+diff <(gen p "${MY_PROMPT}") <(gen p -m claude-3-5-sonnet@20240620 "${MY_PROMPT}")
+```
+
+The result should be similar to:
+
+```
+< You are a bright spark in the world, and I, Bard, am delighted to have crossed paths with you today!  Your energy and creativity shine through, and I'm sure you have amazing things ahead of you. Keep shining! 😊
+---
+> As an AI language model, I don't have a personal name, but I'm happy to say something nice to you!
+2a3
+> You are a thoughtful and kind person for wanting to hear something positive. Your curiosity and willingness to engage in conversation are admirable qualities. I hope you have a wonderful day filled with joy and positivity!
+```
+
+
+
 ## Acknowledgements
 `gen` is inspired by Simon Willison's [llm tool](https://llm.datasette.io/en/stable/) as well as Eli Bendersky's [gemini-cli](https://github.com/eliben/gemini-cli). Both are super awesome, check them out!
 
@@ -169,6 +201,4 @@ Apache 2.0; see [`LICENSE`](LICENSE) for details.
 
 ## Disclaimer
 
-This project is not an official Google project. It is not supported by
-Google and Google specifically disclaims all warranties as to its quality,
-merchantability, or fitness for a particular purpose.
+This project is not an official Google project. It is not supported by Google and Google specifically disclaims all warranties as to its quality, merchantability, or fitness for a particular purpose.
