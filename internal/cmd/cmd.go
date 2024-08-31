@@ -4,7 +4,8 @@ import "github.com/spf13/cobra"
 
 var (
 	// TODO - Look at ways to remove the need to export these two variable outside the package
-	modelName       string
+	modelName string
+	//modelNames      []string // test for multiple models
 	modelConfigFile string
 	//modelConfig     map[string]interface{}
 

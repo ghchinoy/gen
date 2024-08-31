@@ -18,6 +18,7 @@ func init() {
 	rootCmd.AddCommand(promptCmd)
 
 	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.5-flash", "model name")
+	//promptCmd.PersistentFlags().StringArrayVarP(&modelNames, "model", "m", []string{"gemini-1.5-flash"}, "model name(s)")
 	promptCmd.PersistentFlags().StringVarP(&modelConfigFile, "config", "c", "", "model parameters")
 	promptCmd.PersistentFlags().StringVarP(&promptFile, "file", "f", "", "prompt from file")
 }
@@ -63,6 +64,8 @@ func generateContent(cmd *cobra.Command, args []string) {
 		log.Fatalf("error building config: %v", err)
 	}
 
+	//for _, modelName := range modelNames {
+
 	if Logtype != "none" {
 		log.Printf("model: %s", modelName)
 		log.Printf("prompt: %s", prompt)
@@ -81,5 +84,6 @@ func generateContent(cmd *cobra.Command, args []string) {
 		log.Printf("error generating content: %v", err)
 		os.Exit(1)
 	}
+	//}
 
 }
