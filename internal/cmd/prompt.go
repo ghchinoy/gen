@@ -42,6 +42,7 @@ func generateContent(cmd *cobra.Command, args []string) {
 			log.Fatalf("unable to read file %s", promptFile)
 		}
 		prompt = append(prompt, string(promptBytes))
+		prompt = append(prompt, args...) // include existging args
 	} else {
 		if len(args) == 0 {
 			fmt.Println("please provide prompt")
