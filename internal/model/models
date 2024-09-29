@@ -1,5 +1,7 @@
 #family,mode,model
+gemini,text,gemini-pro
 gemini,text,gemini-1.0-pro
+gemini,text,gemini-1.0-pro-001
 gemini,text,gemini-1.0-pro-002
 gemini,text,gemini-1.0-pro-001
 gemini,text,gemini-1.0-ultra-001
@@ -8,8 +10,10 @@ gemini,multimodal,gemini-1.0-pro-vision-001
 gemini,multimodal,gemini-1.0-ultra-vision-001
 gemini,multimodal,gemini-1.5-pro
 gemini,multimodal,gemini-1.5-pro-001
+gemini,multimodal,gemini-1.5-pro-002
 gemini,multimodal,gemini-1.5-flash
 gemini,multimodal,gemini-1.5-flash-001
+gemini,multimodal,gemini-1.5-flash-002
 gemini,multimodal,gemini-experimental
 gemini,multimodal,gemini-flash-experimental
 gemini,multimodal,gemini-pro-experimental
