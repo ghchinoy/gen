@@ -144,14 +144,26 @@ func getPartFromFile(path string) (genai.Part, error) {
 		return nil, err
 	}
 
+	mimeType := mime.TypeByExtension(filepath.Ext(path))
+	log.Printf("%s bytes read: %d", mimeType, len(b))
+
 	ext := filepath.Ext(path)
 	switch strings.TrimSpace(ext) {
 	case ".jpg", ".jpeg":
 		return genai.ImageData("jpeg", b), nil
 	case ".png":
 		return genai.ImageData("png", b), nil
+	case ".gif":
+		return genai.ImageData("gif", b), nil
+	case ".webp":
+		return genai.ImageData("gif", b), nil
+	case ".pdf", ".wav", ".mp3", ".mpeg", ".mov", ".mp4", ".avi", ".mpg", ".wmv", ".mpegs", ".flv":
+		return genai.Blob{
+			MIMEType: mimeType,
+			Data:     b,
+		}, nil
 	default:
-		return nil, fmt.Errorf("invalid image file extension: %s", ext)
+		return nil, fmt.Errorf("invalid file extension: %s", ext)
 	}
 }
 
