@@ -18,6 +18,8 @@ gemini,multimodal,gemini-experimental
 gemini,multimodal,gemini-flash-experimental
 gemini,multimodal,gemini-pro-experimental
 gemini,multimodal,gemini-1.0-pro-preview-open-book-qa
+gemini,multimodal,gemini-2.0-flash-exp
+gemini,multimodal,gemini-2.0-flash-thinking-exp-1219
 palm2,text,text-bison
 palm2,text,text-bison@001
 palm2,text,text-bison@002
