@@ -17,7 +17,7 @@ var (
 func init() {
 	rootCmd.AddCommand(promptCmd)
 
-	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-1.5-flash", "model name")
+	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-2.0-flash", "model name")
 	//promptCmd.PersistentFlags().StringArrayVarP(&modelNames, "model", "m", []string{"gemini-1.5-flash"}, "model name(s)")
 	promptCmd.PersistentFlags().StringVarP(&modelConfigFile, "config", "c", "", "model parameters")
 	promptCmd.PersistentFlags().StringVarP(&promptFile, "file", "f", "", "prompt from file")

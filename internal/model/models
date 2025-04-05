@@ -21,8 +21,11 @@ gemini,multimodal,gemini-1.0-pro-preview-open-book-qa
 gemini,multimodal,gemini-2.0-flash-exp
 gemini,multimodal,gemini-2.0-flash-thinking-exp-01-21
 gemini,multimodal,gemini-2.0-flash
+gemini,multimodal,gemini-2.0-flash-002
 gemini,multimodal,gemini-2.0-pro-exp-02-05
 gemini,multimodal,gemini-2.0-flash-lite
+gemini,multimodal,gemini-2.0-flash-lite-001
+gemini,multimodal,gemini-2.5-pro-exp-03-25
 palm2,text,text-bison
 palm2,text,text-bison@001
 palm2,text,text-bison@002
@@ -48,3 +51,6 @@ anthropic,multimodal,claude-3-5-sonnet@20240620
 anthropic,multimodal,claude-3-5-sonnet-v2@20241022
 anthropic,multimodal,claude-3-7-sonnet@20250219
 meta,text,llama3-405b-instruct-maas
+meta,text,llama-3.3-70b-instruct-maas
+meta,multimodal,llama-3.2-90b-vision-instruct
+ai21,text,ai21/jamba-1.5-mini@001
