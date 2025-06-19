@@ -3,8 +3,8 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
+	"strings"
 
 	"github.com/ghchinoy/gen/internal/model"
 	"github.com/spf13/cobra"
@@ -17,7 +17,8 @@ var (
 func init() {
 	rootCmd.AddCommand(promptCmd)
 
-	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-2.0-flash", "model name")
+	promptCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "gemini-2.5-flash", "model name")
+promptCmd.Flag("model").DefValue = "gemini-2.5-flash"
 	//promptCmd.PersistentFlags().StringArrayVarP(&modelNames, "model", "m", []string{"gemini-1.5-flash"}, "model name(s)")
 	promptCmd.PersistentFlags().StringVarP(&modelConfigFile, "config", "c", "", "model parameters")
 	promptCmd.PersistentFlags().StringVarP(&promptFile, "file", "f", "", "prompt from file")
@@ -28,63 +29,50 @@ var promptCmd = &cobra.Command{
 	Aliases: []string{"p"},
 	Short:   "Prompt a model",
 	Long:    `Provide prompt parts to a model to generate content`,
-	// Run:     generateContentForModel,
-	Run: generateContent,
+	RunE:    generateContentE,
 }
 
-// generateContent prompts a model to generate content based on the provided prompt.
-func generateContent(cmd *cobra.Command, args []string) {
+// generateContentE prompts a model to generate content based on the provided prompt.
+func generateContentE(cmd *cobra.Command, args []string) error {
+	if !cmd.Flag("model").Changed {
+		modelName = "gemini-2.5-flash"
+	}
 
-	var prompt []string
+	var prompt string
+
 	if promptFile != "" {
 		promptBytes, err := os.ReadFile(promptFile)
 		if err != nil {
-			log.Fatalf("unable to read file %s", promptFile)
+			return fmt.Errorf("unable to read file %s: %w", promptFile, err)
 		}
-		prompt = append(prompt, string(promptBytes))
-		prompt = append(prompt, args...) // include existging args
+		prompt = string(promptBytes)
 	} else {
 		if len(args) == 0 {
-			fmt.Println("please provide prompt")
-			log.Fatal("please provide prompt")
+			return fmt.Errorf("please provide prompt")
 		}
-		prompt = args
+		prompt = strings.Join(args, " ")
 	}
 
-	//log.Printf("ProjectID: %s, Region: %s\n", projectID, region)
-
-	cfgB := model.ConfigBuilder{}
-
-	// Set the model configuration
-	cfgB.ProjectID(projectID).RegionID(region).ConfigFile(cfgFile).OutputType(Outputtype).LogType(Logtype)
-	// fmt.Printf("Model config: %s\n", cfgB.Describe())
-	cfg, err := cfgB.Build()
-	log.Printf("Model Config: %+v", cfg)
-
-	if err != nil {
-		log.Fatalf("error building config: %v", err)
+	cfg := model.Config{
+		ProjectID:  projectID,
+		RegionID:   region,
+		ConfigFile: cfgFile,
+		OutputType: Outputtype,
+		LogType:    Logtype,
 	}
-
-	//for _, modelName := range modelNames {
 
 	if Logtype != "none" {
-		log.Printf("model: %s", modelName)
-		log.Printf("prompt: %s", prompt)
-	}
-
-	// Lookup the model based on the name
-	m, err := model.Get(modelName)
-	if err != nil {
-		log.Fatalf("model '%s' is not supported\n", modelName)
+		fmt.Printf("model: %s\n", modelName)
+		fmt.Printf("prompt: %s\n", prompt)
 	}
 
 	ctx := context.Background()
 
-	err = m.Use(ctx, cfg, prompt)
+	client, err := model.NewClient(ctx, cfg, modelName)
 	if err != nil {
-		log.Printf("error generating content: %v", err)
-		os.Exit(1)
+		return fmt.Errorf("error creating client: %w", err)
 	}
-	//}
 
+	return client.GenerateContent(ctx, os.Stdout, prompt, nil)
 }
+

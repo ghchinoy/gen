@@ -43,13 +43,13 @@ gcloud auth application-default login
 
 #### GCP Project & Region
 
-Set your Google Cloud Project either via the env var `PROJECT_ID` or via the flag `--project` and your region either via the env var `REGION` or via the flag `--region`
+Set your Google Cloud Project either via the env var `GEN_PROJECT_ID` or via the flag `--project` and your region either via the env var `GEN_REGION` or via the flag `--region`
 
 Using env vars
 
 ```bash
-export PROJECT_ID=$(gcloud config get project)
-export REGION=us-central1
+export GEN_PROJECT_ID=$(gcloud config get project)
+export GEN_REGION=us-central1
 ```
 
 Using flags
@@ -62,7 +62,7 @@ gen --project $(gcloud config get project) --region us-central1 p "hi there"
 
 ### Generate content
 
-Generate content with the `prompt` command. This defaults to Gemini.
+Generate content with the `prompt` command. This defaults to `gemini-2.5-flash`.
 
 ```bash
 gen prompt "say something nice to me"
@@ -92,7 +92,7 @@ gen p --model text-bison@002 "say something nice to me"
 
 Note: This uses the `p` alias for the `prompt` command, see `gen help prompt` for aliases for a specific command.
 
-If you have [Anthropic's models activated from Model Garden](https://console.cloud.google.com/vertex-ai/model-garden?pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22providers%22%5D,%22o%22:%5B%22ANTHROPIC%22%5D),%22s%22:%22%22))), you can also use the model name in the `--model` (or `-m`) flag, the example below is for [Claude 3 Haiku](https://console.cloud.google.com/vertex-ai/publishers/anthropic/model-garden/claude-3-haiku):
+If you have [Anthropic's models activated from Model Garden](https://console.cloud.google.com/vertex-ai/model-garden?pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22providers%22%5D,%22o%22:%5B%22ANTHROPIC%22%5D),%22s%22:%22%22))), you can also use the model name in the `--model` (or `-m`) flag, the example below is for [Claude 3 Haiku](https://console.cloud.google.com/vertex-ai/publishers/anthropic/model-garden/claude-3-haiku). The tool uses the `aiplatform` SDK for these models.
 
 ```bash
 gen p -m claude-3-haiku@20240307 "say something nice to me"
@@ -189,6 +189,21 @@ The result should be similar to:
 > You are a thoughtful and kind person for wanting to hear something positive. Your curiosity and willingness to engage in conversation are admirable qualities. I hope you have a wonderful day filled with joy and positivity!
 ```
 
+
+
+## Development
+
+This project uses a hybrid approach to interacting with Google's generative models. The `google.golang.org/genai` SDK is used for Gemini models, while the `cloud.google.com/go/aiplatform` SDK is used for other models from the Vertex AI Model Garden.
+
+### Architecture
+
+The `internal/model` package contains the core logic for interacting with the different models. The `ModelClient` interface provides a common abstraction for the different model clients, and the `NewClient` factory function is responsible for creating the correct client based on the model name. The `NewClient` function acts as a dispatcher, using the `genai` SDK for Gemini models and the `aiplatform` SDK for other models.
+
+The `internal/cmd` package contains the command-line interface logic, which is built using the `cobra` library.
+
+### Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
 
 
 ## Acknowledgements

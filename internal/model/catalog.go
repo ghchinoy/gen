@@ -1,7 +1,6 @@
 package model
 
 import (
-	"context"
 	"embed"
 	"encoding/csv"
 	"fmt"
@@ -13,10 +12,9 @@ var modelfiles embed.FS
 
 // A Model sends prompts to a specific GenAI model using an Endpoint location, where the model is enabled and billed
 type Model struct {
-	prompt func(ctx context.Context, modelName string, cfg Config, args []string) error `json:"-"`
-	Family string                                                                       `json:"family"`
-	Mode   string                                                                       `json:"mode"`
-	Name   string                                                                       `json:"name"`
+	Family string `json:"family"`
+	Mode   string `json:"mode"`
+	Name   string `json:"name"`
 }
 
 // listToModels returns a slice of Models from the embedded CSV file of models
@@ -43,15 +41,6 @@ func listToModels() ([]Model, error) {
 			Mode:   record[1],
 			Name:   record[2],
 		}
-		if strings.HasPrefix(model.Family, "gemini") {
-			model.prompt = UseGeminiModel
-		}
-		if strings.HasPrefix(model.Family, "palm") {
-			model.prompt = UsePaLMModel
-		}
-		if strings.HasPrefix(model.Family, "anthropic") {
-			model.prompt = UseClaudeModel
-		}
 		models = append(models, model)
 	}
 	return models, nil
@@ -72,14 +61,4 @@ func Get(name string) (Model, error) {
 		}
 	}
 	return Model{}, fmt.Errorf("Model: `%s` not found", name)
-}
-
-// TODO - Ideally would like to avoid this level of indirection, but using it for the
-//
-//	time being to get course grained refactoring working
-func (m Model) Use(ctx context.Context, cfg Config, args []string) error {
-	if m.prompt != nil {
-		return m.prompt(ctx, m.Name, cfg, args)
-	}
-	return fmt.Errorf("Model: `%s` does not currently implement the `Use` method", m.Name)
 }

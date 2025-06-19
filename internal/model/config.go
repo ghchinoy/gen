@@ -3,66 +3,82 @@ package model
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 )
 
+// Config is the configuration for the application.
 type Config struct {
-	ProjectID  string
-	RegionID   string
-	ConfigFile string
-	LogType    string
-	OutputType string
+	ProjectID      string
+	RegionID       string
+	ConfigFile     string
+	LogType        string
+	OutputType     string
+	ModelParameters map[string]interface{}
 }
 
+// ConfigBuilder is a builder for the Config struct.
 type ConfigBuilder struct {
-	projectID  string
-	regionID   string
-	configFile string
-	logType    string
-	outputType string
+	projectID      string
+	regionID       string
+	configFile     string
+	logType        string
+	outputType     string
+	modelParameters map[string]interface{}
 }
 
+// ProjectID sets the project ID.
 func (b *ConfigBuilder) ProjectID(p string) *ConfigBuilder {
 	b.projectID = p
 	return b
 }
 
-// TODO - Need to document allowed values and validate input
+// RegionID sets the region ID.
+// Allowed values are: us-central1, us-east1, us-west1, etc.
 func (b *ConfigBuilder) RegionID(r string) *ConfigBuilder {
 	b.regionID = r
 	return b
 }
+
+// ConfigFile sets the config file.
 func (b *ConfigBuilder) ConfigFile(configFile string) *ConfigBuilder {
 	b.configFile = configFile
 	return b
 }
 
-// TODO - Need to document allowed values and validate input
+// LogType sets the log type.
+// Allowed values are: none, quiet, verbose.
 func (b *ConfigBuilder) LogType(logType string) *ConfigBuilder {
+	if logType != "none" && logType != "quiet" && logType != "verbose" {
+		logType = "none"
+	}
 	b.logType = logType
 	return b
 }
 
-// TODO - Need to document allowed values and validate input
+// OutputType sets the output type.
+// Allowed values are: text, json.
 func (b *ConfigBuilder) OutputType(outputType string) *ConfigBuilder {
+	if outputType != "text" && outputType != "json" {
+		outputType = "text"
+	}
 	b.outputType = outputType
 	return b
 }
 
+// Describe returns a string description of the ConfigBuilder.
 func (b *ConfigBuilder) Describe() string {
 	return fmt.Sprintf("%+v", b)
 }
 
+// Build builds the Config struct.
 func (b *ConfigBuilder) Build() (Config, error) {
 
 	cfg := Config{}
 
 	if b.projectID == "" {
-		log.Fatalln("Need a valid GCP project ID")
-	} else {
-		cfg.ProjectID = b.projectID
+		return cfg, fmt.Errorf("need a valid GCP project ID")
 	}
+	cfg.ProjectID = b.projectID
 
 	if b.regionID == "" {
 		cfg.RegionID = "us-central1"
@@ -70,42 +86,22 @@ func (b *ConfigBuilder) Build() (Config, error) {
 		cfg.RegionID = b.regionID
 	}
 
-	if b.configFile == "" {
-		cfg.ConfigFile = b.configFile
-	}
+	cfg.ConfigFile = b.configFile
+	cfg.LogType = b.logType
+	cfg.OutputType = b.outputType
 
-	if b.logType == "" {
-		cfg.LogType = "none"
-	} else {
-		cfg.LogType = b.logType
-	}
+	if b.configFile != "" {
+		data, err := os.ReadFile(b.configFile)
+		if err != nil {
+			return cfg, fmt.Errorf("error reading model config: %v", err)
+		}
 
-	if b.outputType == "" {
-		cfg.OutputType = b.outputType
+		err = json.Unmarshal(data, &b.modelParameters)
+		if err != nil {
+			return cfg, fmt.Errorf("error unmarshalling model config: %v", err)
+		}
+		cfg.ModelParameters = b.modelParameters
 	}
 
 	return cfg, nil
-}
-
-// TODO - Revisit ReadModelConfigFile() and decide whether it should be exported or not
-// and whether it should instead set the fields of the struct as a way
-// to initialize a model configuration from a file.  If thats the case, then this
-// should be a method on the ConfigBuilder, that way when the Build() method is invoked
-// it would validate the inputs and return a valid Config instance.
-
-// readModelConfigFile reads the model configuration file (JSON text file)
-func (cfg Config) ReadModelConfigFile() (map[string]interface{}, error) {
-
-	var config map[string]interface{}
-	data, err := os.ReadFile(cfg.ConfigFile)
-	if err != nil {
-		return config, fmt.Errorf("error reading model config: %v", err)
-
-	}
-
-	err = json.Unmarshal(data, &config)
-	if err != nil {
-		return config, fmt.Errorf("error unmarshalling model config: %v", err)
-	}
-	return config, nil
 }
